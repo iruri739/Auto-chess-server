@@ -39,6 +39,54 @@ public class PlayerData {
                 '}';
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public void setGold(int gold) {
+        this.gold = gold;
+    }
+
+    public int getWinCount() {
+        return winCount;
+    }
+
+    public void setWinCount(int winCount) {
+        this.winCount = winCount;
+    }
+
+    public List<Chess> getHandCards() {
+        return handCards;
+    }
+
+    public void setHandCards(List<Chess> handCards) {
+        this.handCards = handCards;
+    }
+
+    public List<Chess> getBattleCards() {
+        return battleCards;
+    }
+
+    public void setBattleCards(List<Chess> battleCards) {
+        this.battleCards = battleCards;
+    }
+
+    public List<Chess> getCardInventory() {
+        return cardInventory;
+    }
+
+    public void setCardInventory(List<Chess> cardInventory) {
+        this.cardInventory = cardInventory;
+    }
+
     public int getId() {
         return id;
     }

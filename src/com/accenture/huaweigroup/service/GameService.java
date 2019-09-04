@@ -22,6 +22,8 @@ public class GameService {
     private GameRecordMapper gameRecordMapper;
     @Autowired
     private ChessService chessService;
+    @Autowired
+    private UserService userService;
 
     private ConcurrentHashMap<Integer, Boolean> waitPlayerList = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Integer, Game> gameList = new ConcurrentHashMap<>();
@@ -59,6 +61,11 @@ public class GameService {
         return false;
     }
 
+    /**
+     * 根据用户id寻找游戏id
+     * @param playerId
+     * @return
+     */
     private Game findGameByPlayerId(int playerId) {
         for (Game game : gameList.values()) {
             if (game.containPlayer(playerId)) {
@@ -108,13 +115,12 @@ public class GameService {
      * 创建游戏
      * @param playerOneId 玩家1的ID
      * @param playerTwoId 玩家2的ID
-     * @return 返回游戏ID
      */
-    public int createGame(int playerOneId, int playerTwoId) {
+    public void createGame(int playerOneId, int playerTwoId) {
         gameRecordMapper.insert(new GameRecord(playerOneId, playerTwoId));
         GameRecord gameRecord = gameRecordMapper.findByPlayerId(playerOneId, playerTwoId);
         Game newGame = new Game(gameRecord.getRecordId(), playerOneId, playerTwoId);
-        return 0;
+        gameList.put(newGame.getId(), newGame);
     }
 
 
@@ -136,47 +142,34 @@ public class GameService {
         return "none";
     }
 
-    public boolean setMatchReady(int playerId) {
-
-        return false;
-    }
-
-
-
-
-
-
     //获取游戏初始数据
-    public GameInitData getInitGameData(int gameId, int playerId) {
+    public GameInitData getInitGameData(int playerId) {
+        GameInitData gameInitData = new GameInitData();
+        Game game = findGameByPlayerId(playerId);
+        Player playerOne = game.getPlayer(playerId);
+        Player playerTwo = game.getConponentPlayer(playerId);
 
-    GameInitData gameInitData = new GameInitData();
-        gameInitData.setGameId(gameId);
-        gameInitData.setOpponentPlayerId(playerId);
+        gameInitData.setGameId(game.getId());
+        gameInitData.setOpponentPlayerId(playerTwo.getId());
+        User user = userService.getUserById(playerTwo.getId());
+        gameInitData.setOpponentPlayerName(user.getName());
+        PlayerData playerData = new PlayerData();
+        playerData.setId(playerOne.getId());
+        playerData.setHp(playerOne.getHp());
+        playerData.setGold(playerOne.getGold());
+        playerData.setCardInventory(chessService.getRandomCards());
+        gameInitData.setPlayerData(playerData);
 
         return gameInitData;
-}
+    }
 
     public boolean updateGameRecord(int gameId, int playerId) {
 
         return false;
     }
 
-
-    //游戏数据初始化
-    public PlayerData getPlayerDate(int playerId)
-    {
-        List<Chess> handCards = null;
-        List<Chess> battleCards = null;
-        List<Chess> cardInventory = null;
-        PlayerData playerDate = new PlayerData(playerId,100,10,0,handCards,battleCards,cardInventory);
-
-        return playerDate;
-    }
-
     //获取玩家数据
     public PlayerBattleData getPlayerBattleData(int gameId, int playerId) {
-
-
 
         return null;
     }

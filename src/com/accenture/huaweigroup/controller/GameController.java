@@ -1,6 +1,8 @@
 package com.accenture.huaweigroup.controller;
 
 import com.accenture.huaweigroup.module.entity.Chess;
+import com.accenture.huaweigroup.module.entity.Game;
+import com.accenture.huaweigroup.module.entity.GameInitData;
 import com.accenture.huaweigroup.module.entity.PlayerData;
 import com.accenture.huaweigroup.service.ChessService;
 
@@ -45,6 +47,7 @@ public class GameController {
     @GetMapping("/checkMatch")
     public boolean checkMatch(@RequestParam("playerId") int playerId) {
         if (gameService.matchReadyCheck(playerId)) {
+//            Game game = gameService.findGameByPlayerId(playerId);
             return true;
         }
         return false;
@@ -66,6 +69,12 @@ public class GameController {
             LOG.error("玩家[" + playerId +"] 取消匹配过程发生错误！！！");
         }
         return false;
+    }
+
+    @ApiOperation(value = "获取初始游戏数据", notes = "调用接口获取初始玩家游戏数据", httpMethod = "GET")
+    @GetMapping("/getInitData")
+    public GameInitData getGameInitData(@RequestParam("playerId") int playerId) {
+        return gameService.getInitGameData(playerId);
     }
 
 

@@ -69,6 +69,10 @@ public class UserService {
         }
     }
 
+    public User getUserById(int userid) {
+        return userMapper.getUserById(userid);
+    }
+
     /**
      * 检查用户在线状态
      * 如果用户状态为 true 则表明用户仍然在有效期

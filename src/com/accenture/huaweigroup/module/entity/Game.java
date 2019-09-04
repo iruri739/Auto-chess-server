@@ -66,6 +66,15 @@ public class Game {
         return playerList.get(playerId);
     }
 
+    public Player getConponentPlayer(int playerId) {
+        for (Player player : playerList.values()) {
+            if (player.getId() != playerId) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     //双方玩家战场上卡牌的战斗处理
     public int fight() {
         return 0;
@@ -112,4 +121,39 @@ public class Game {
         return player.getCardInventory();
     }
 
+    public ConcurrentHashMap<Integer, Player> getPlayerList() {
+        return playerList;
+    }
+
+    public int getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public int getRounds() {
+        return rounds;
+    }
+
+    public void setRounds(int rounds) {
+        this.rounds = rounds;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }
