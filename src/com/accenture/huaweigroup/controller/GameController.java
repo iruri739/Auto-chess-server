@@ -29,26 +29,6 @@ public class GameController {
     @Autowired
     private ChessService chessService;
 
-
-    @GetMapping(value = "/getPlayerData")
-    public String getPlayerData(@RequestParam("playerId") int playerId){
-        String playerData = gameService.getPlayerDate(playerId).toString();
-        return  playerData;
-    }
-
-    @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "返回", httpMethod = "GET")
-    @GetMapping(value = "/getChessData")
-    public ArrayList<Chess> getChessData(@RequestParam("gameId") int gameId,
-                                         @RequestParam("playerId") int playerId)
-    {
-        return chessService.getRandomCards();
-    }
-
-    @GetMapping("/checkGameResult")
-    public String checkGameResult(@RequestParam("playerId") int playerId) {
-        return null;
-    }
-
     @ApiOperation(value = "玩家匹配", notes = "玩家匹配接口", httpMethod = "GET")
     @GetMapping("/matchGame")
     public boolean matchGame(@RequestParam("playerId") int playerId) {
@@ -78,44 +58,32 @@ public class GameController {
         }
         return false;
     }
-//	@Autowired
-//	private GameService gameService;
-//
-//	@GetMapping(value = "/create")
-//	public void buyAnimal(@RequestParam("firstUserID") int firstUserID,@RequestParam("secondUserID") int secondUserID) {
-//
-//	}
-//
-//	@GetMapping(value = "/join")
-//	public String joinGame(@RequestParam("userID") Integer userId) {
-//		if (gameService.join(userId) == 1) {
-//			return "等待";
-//		} else {
-//			return "成功";
-//		}
-//	}
-//
-//	@GetMapping(value = "/refresh")
-//	public set<Animal> refreshAnimal() {
-//
-//		return null;
-//
-//	}
-//
-//	@GetMapping(value = "/fight")
-//	public Integer fightAniaml(@RequestParam("firstAnimalSet") set<Animal> firstAnimalSet,@RequestParam("secondAnimalSet") set<Animal> secondAnimalSet) {
-//
-//		return 0;
-//
-//	}
-//
-//	@GetMapping(value = "/match")
-//	public boolean matchGame(@RequestParam("userID") Integer userID) {
-//
-//		return true;
-//
-//	}
-//
-//
+
+    @ApiOperation(value = "验证匹配", notes = "验证匹配的玩家是否都已经准备开始游戏", httpMethod = "GET")
+    @GetMapping("/checkMatch")
+    public boolean checkMatch(@RequestParam("playerId") int playerId) {
+        
+        return false;
+    }
+
+    @GetMapping(value = "/getPlayerData")
+    public String getPlayerData(@RequestParam("playerId") int playerId){
+        String playerData = gameService.getPlayerDate(playerId).toString();
+        return  playerData;
+    }
+
+    @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "返回", httpMethod = "GET")
+    @GetMapping(value = "/getChessData")
+    public ArrayList<Chess> getChessData(@RequestParam("gameId") int gameId,
+                                         @RequestParam("playerId") int playerId)
+    {
+        return chessService.getRandomCards();
+    }
+
+    @GetMapping("/checkGameResult")
+    public String checkGameResult(@RequestParam("playerId") int playerId) {
+        return null;
+    }
+
 	
 }

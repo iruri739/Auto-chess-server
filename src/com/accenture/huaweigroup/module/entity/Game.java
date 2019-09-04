@@ -43,6 +43,19 @@ public class Game {
         }
     }
 
+    public boolean containPlayer(int playerId) {
+        for (Player player : playerList.values()) {
+            if (player.getId() == playerId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Player getPlayer(int playerId) {
+        return playerList.get(playerId);
+    }
+
     //双方玩家战场上卡牌的战斗处理
     public int fight() {
         return 0;

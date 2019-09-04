@@ -9,6 +9,7 @@ public class PlayerBattleData {
     private int gameId;
     private int rounds;
     private int prepareTime;
+    private int battleTime;
     private PlayerData playerData;
 
     public PlayerBattleData() {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 @Component
 public class Player {
-    private static final int PLAYER_TOTAL_HP = 30;
+    private static final int PLAYER_TOTAL_HP = 100;
     private static final int PLAYER_INIT_GOLD = 5;
 
     private int id;
@@ -23,17 +23,17 @@ public class Player {
     public Player() {
         super();
         this.id = 0;
-        for (int i = 0; i < 5; ++i) {
-            this.battleCards.add(null);
-        }
+//        for (int i = 0; i < 5; ++i) {
+//            this.battleCards.add(null);
+//        }
     }
 
     public Player(int id) {
         super();
         this.id = id;
-        for (int i = 0; i < 5; ++i) {
-            this.battleCards.add(null);
-        }
+//        for (int i = 0; i < 5; ++i) {
+//            this.battleCards.add(null);
+//        }
     }
 
 

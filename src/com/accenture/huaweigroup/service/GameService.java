@@ -32,6 +32,7 @@ public class GameService {
      * @return 成功返回 ture 否则返回 false
      */
     public boolean matchGame(int playerId) throws Exception {
+        //如果玩家已经在列表则检查是否已经完成匹配准备
         if (waitPlayerList.containsKey(playerId)) {
             if (waitPlayerList.get(playerId)) {
                 return true;
@@ -39,6 +40,8 @@ public class GameService {
                 return false;
             }
         }
+        //如果玩家不在列表，检查列表是否为空，为空添加到列表中
+        //列表不为空则寻找尚未完成匹配准备的玩家并创建游戏等待玩家准备
         if (waitPlayerList.size() == 0) {
             waitPlayerList.put(playerId, false);
             return false;
@@ -56,6 +59,13 @@ public class GameService {
         return false;
     }
 
+    /**
+     * 取消匹配流程
+     *
+     * @param playerId
+     * @return
+     * @throws Exception
+     */
     public boolean cancelMatch(int playerId) throws Exception {
         if (waitPlayerList.containsKey(playerId)) {
             waitPlayerList.remove(playerId);
@@ -64,13 +74,33 @@ public class GameService {
         return false;
     }
 
-    private int findGameByPlayerId(int playerId) {
-        return 0;
+    private Game findGameByPlayerId(int playerId) {
+        for (Game game : gameList.values()) {
+            if (game.containPlayer(playerId)) {
+                return game;
+            }
+        }
+        return null;
     }
 
-    public boolean playerStateCheck(int playerId) {
+    //检查玩家游戏状态
+    public String playerStateCheck(int playerId) {
+        Game game = findGameByPlayerId(playerId);
+        if (game != null) {
+            PlayerState state = game.getPlayer(playerId).getState();
+            switch (state) {
+                case PREPARE:
+                    return "prepare";
+                case BATTLE:
+                    return "battle";
+                case REDAY:
+                    return "ready";
+            }
+        }
+        return "none";
+    }
 
-//        Game game = gameList.get(gameId);
+    public boolean setMatchReady(int playerId) {
 
         return false;
     }
