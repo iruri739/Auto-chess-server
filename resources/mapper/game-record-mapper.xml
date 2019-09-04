@@ -29,15 +29,14 @@
              #{winnerId, jdbcType=INTEGER}, #{gameState}, #{gameId})
     </insert>
 
-    <!--<update id="update" parameterType="com.accenture.huaweigroup.module.entity.GameRecord">-->
-        <!--update game-->
-            <!--<set>-->
-                <!--<if test="userId != null">user_id = #{userId}, </if>-->
-                <!--<if test="otherUserId != null">other_user_id = #{otherUserId},</if>-->
-                <!--<if test="winnerId != null">winner_id = #{winnerId},</if>-->
-                <!--<if test="gameStatus != null">game_status = #{gameStatus}</if>-->
-            <!--</set>-->
-            <!--where game_id = #{gameId}-->
-    <!--</update>-->
+    <update id="update" parameterType="com.accenture.huaweigroup.module.entity.GameRecord">
+        update game
+            set player_one_id = #{playerOneId},
+            player_two_id = #{playerTwoId},
+            winner_id = #{playerTwoId},
+            game_state = #{gameState},
+            game_id = #{gameId}
+        where record_id = #{recordId}
+    </update>
 
 </mapper>

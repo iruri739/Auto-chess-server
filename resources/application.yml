@@ -4,7 +4,7 @@ server:
 logging:
     file: spring.log
 
-debug: false
+debug: true
 
 
 spring:
@@ -29,6 +29,8 @@ spring:
         cache: false
     thymeleaf:
         cache: true
+    http:
+        log-request-details: true
 
 mybatis:
     type-aliases-package: com.accenture.huaweigroup.module.entity

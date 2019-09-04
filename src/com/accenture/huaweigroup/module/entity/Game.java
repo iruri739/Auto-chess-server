@@ -2,6 +2,7 @@ package com.accenture.huaweigroup.module.entity;
 
 import com.accenture.huaweigroup.service.ChessService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -22,7 +23,9 @@ public class Game {
     private int totalTime = 0;
     private int rounds = 1;
     private int prepareTime = PLAYER_DEFAULT_PREPARETIME;
+    private boolean startPrepare = false;
     private int battleTime = BATTLE_DEFAULT_TIME;
+    private boolean startBattle = false;
     private GameState state = GameState.CREATED;
     private ConcurrentHashMap<Integer, Player> playerList = new ConcurrentHashMap<>();
 
@@ -35,6 +38,40 @@ public class Game {
         this.id = id;
         this.playerList.put(playerOneId, new Player(playerOneId));
         this.playerList.put(playerTwoId, new Player(playerTwoId));
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    private void checkTimeState() {
+        if (checkPlayerState(PlayerState.PREPARE)) {
+            startPrepare = true;
+        }
+        if (checkPlayerState(PlayerState.BATTLE)) {
+            startBattle = true;
+        }
+    }
+
+    @Scheduled(initialDelay = 2000, fixedDelay = 1000)
+    private void circlePrepareTime() {
+        if (startPrepare) {
+            prepareTime--;
+            System.out.println("剩余准备时间：" + prepareTime);
+            if (prepareTime == 0) {
+                startPrepare = false;
+                prepareTime = PLAYER_DEFAULT_PREPARETIME;
+            }
+        }
+    }
+
+    @Scheduled(initialDelay = 2000, fixedDelay = 1000)
+    private void circleBattleTime() {
+        if (startBattle) {
+            battleTime--;
+            System.out.println("剩余战斗时间：" + battleTime);
+            if (battleTime == 0) {
+                startBattle = false;
+                battleTime = BATTLE_DEFAULT_TIME;
+            }
+        }
     }
 
 
