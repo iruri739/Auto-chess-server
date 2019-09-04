@@ -8,9 +8,9 @@
     <resultMap id="getGameEntityResultMap" type="com.accenture.huaweigroup.module.entity.GameRecord">
         <id property="recordId" column="record_id"/>
         <result property="playerOneId" column="player_one_id"/>
-        <result property="playaerTwoId" column="player_two_id"/>
+        <result property="playerTwoId" column="player_two_id"/>
         <result property="winnerId" column="winner_id"/>
-        <result property="gameState" column="game_status"/>
+        <result property="gameState" column="game_state"/>
         <result property="gameId" column="game_id"/>
     </resultMap>
 
@@ -19,10 +19,14 @@
         select * from game where game_id = #{gameId}
     </select>
 
+    <select id="findByPlayerId" parameterType="int" resultMap="getGameEntityResultMap">
+        select * from game where (player_one_id = #{playerOneId} and player_two_id = #{playerTwoId}) and game_state = 0
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="recordId" parameterType="com.accenture.huaweigroup.module.entity.GameRecord">
-        insert into game(player_one_id, player_two_id, winner_id, game_status, game_id)
+        insert into game(player_one_id, player_two_id, winner_id, game_state, game_id)
             values (#{playerOneId, jdbcType=INTEGER}, #{playerTwoId, jdbcType=INTEGER},
-             #{winnerId, jdbcType=INTEGER}, #{gameStatus}, #{gameId})
+             #{winnerId, jdbcType=INTEGER}, #{gameState}, #{gameId})
     </insert>
 
     <!--<update id="update" parameterType="com.accenture.huaweigroup.module.entity.GameRecord">-->

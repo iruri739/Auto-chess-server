@@ -15,6 +15,12 @@ public class GameRecord {
         super();
     }
 
+    public GameRecord(int playerOneId, int playerTwoId) {
+        this.playerOneId = playerOneId;
+        this.playerTwoId = playerTwoId;
+        this.gameState = 0;
+    }
+
     @Override
     public String toString() {
         return "GameRecord{" +

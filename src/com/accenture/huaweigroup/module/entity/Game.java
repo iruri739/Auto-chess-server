@@ -31,6 +31,7 @@ public class Game {
     }
 
     public Game(int id, int playerOneId, int playerTwoId) {
+        super();
         this.id = id;
         this.playerList.put(playerOneId, new Player(playerOneId));
         this.playerList.put(playerTwoId, new Player(playerTwoId));
@@ -50,6 +51,15 @@ public class Game {
             }
         }
         return false;
+    }
+
+    public boolean checkPlayerState(PlayerState state) {
+        for (Player player : playerList.values()) {
+            if (player.getState() != state) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Player getPlayer(int playerId) {

@@ -14,7 +14,7 @@ public class Player {
     private int gold = PLAYER_INIT_GOLD;
     private int winCount = 0;
 
-    private PlayerState state = PlayerState.PREPARE;
+    private PlayerState state = PlayerState.NONE;
 
     private ArrayList<Chess> handCards = new ArrayList<>();
     private ArrayList<Chess> battleCards = new ArrayList<>();

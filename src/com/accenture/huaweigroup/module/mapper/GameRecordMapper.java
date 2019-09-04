@@ -11,5 +11,7 @@ public interface GameRecordMapper {
     //xml配置文件未更新
 //    void update(GameRecord gameRecord);
 
+    GameRecord findByPlayerId(int playerOneId, int playerTwoId);
+
     GameRecord findByGameId(int gameId);
 }

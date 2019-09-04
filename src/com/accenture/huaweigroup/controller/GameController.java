@@ -29,7 +29,7 @@ public class GameController {
     @Autowired
     private ChessService chessService;
 
-    @ApiOperation(value = "玩家匹配", notes = "玩家匹配接口", httpMethod = "GET")
+    @ApiOperation(value = "玩家匹配", notes = "调用该接口", httpMethod = "GET")
     @GetMapping("/matchGame")
     public boolean matchGame(@RequestParam("playerId") int playerId) {
         try {
@@ -37,6 +37,15 @@ public class GameController {
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("玩家[" + playerId +"] 匹配过程发生错误！！！");
+        }
+        return false;
+    }
+
+    @ApiOperation(value = "验证匹配", notes = "验证匹配的玩家是否都已经准备开始游戏", httpMethod = "GET")
+    @GetMapping("/checkMatch")
+    public boolean checkMatch(@RequestParam("playerId") int playerId) {
+        if (gameService.matchReadyCheck(playerId)) {
+            return true;
         }
         return false;
     }
@@ -59,12 +68,7 @@ public class GameController {
         return false;
     }
 
-    @ApiOperation(value = "验证匹配", notes = "验证匹配的玩家是否都已经准备开始游戏", httpMethod = "GET")
-    @GetMapping("/checkMatch")
-    public boolean checkMatch(@RequestParam("playerId") int playerId) {
-        
-        return false;
-    }
+
 
     @GetMapping(value = "/getPlayerData")
     public String getPlayerData(@RequestParam("playerId") int playerId){

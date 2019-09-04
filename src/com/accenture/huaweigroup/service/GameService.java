@@ -59,6 +59,36 @@ public class GameService {
         return false;
     }
 
+    private Game findGameByPlayerId(int playerId) {
+        for (Game game : gameList.values()) {
+            if (game.containPlayer(playerId)) {
+                return game;
+            }
+        }
+        return null;
+    }
+
+    /**
+     *  检查双方玩家是否已经做好匹配准备
+     * @param playerId 玩家ID
+     * @return
+     */
+    public boolean matchReadyCheck(int playerId) {
+        Game game = findGameByPlayerId(playerId);
+        if (game == null) {
+            return false;
+        }
+        if (game.getPlayer(playerId).getState() == PlayerState.NONE) {
+            game.getPlayer(playerId).setState(PlayerState.REDAY);
+            return false;
+        } else {
+            if (game.checkPlayerState(PlayerState.REDAY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 取消匹配流程
      *
@@ -74,14 +104,20 @@ public class GameService {
         return false;
     }
 
-    private Game findGameByPlayerId(int playerId) {
-        for (Game game : gameList.values()) {
-            if (game.containPlayer(playerId)) {
-                return game;
-            }
-        }
-        return null;
+    /**
+     * 创建游戏
+     * @param playerOneId 玩家1的ID
+     * @param playerTwoId 玩家2的ID
+     * @return 返回游戏ID
+     */
+    public int createGame(int playerOneId, int playerTwoId) {
+        gameRecordMapper.insert(new GameRecord(playerOneId, playerTwoId));
+        GameRecord gameRecord = gameRecordMapper.findByPlayerId(playerOneId, playerTwoId);
+        Game newGame = new Game(gameRecord.getRecordId(), playerOneId, playerTwoId);
+        return 0;
     }
+
+
 
     //检查玩家游戏状态
     public String playerStateCheck(int playerId) {
@@ -106,17 +142,9 @@ public class GameService {
     }
 
 
-    //检查匹配流程是否成功
-    public boolean gameReadyCheck(int gameId, int playerId) {
 
-        return false;
-    }
 
-    //创建游戏
-    public boolean createGame(int playerOneId, int playerTwoId) {
 
-        return false;
-    }
 
     //获取游戏初始数据
     public GameInitData getInitGameData(int gameId, int playerId) {
