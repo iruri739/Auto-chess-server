@@ -35,14 +35,8 @@ public class Game {
         this.id = id;
         this.playerList.put(playerOneId, new Player(playerOneId));
         this.playerList.put(playerTwoId, new Player(playerTwoId));
-        initPlayerCards();
     }
 
-    private void initPlayerCards() {
-        for (Player player : playerList.values()) {
-            player.setCardInventory(chessService.getRandomCards());
-        }
-    }
 
     public boolean containPlayer(int playerId) {
         for (Player player : playerList.values()) {

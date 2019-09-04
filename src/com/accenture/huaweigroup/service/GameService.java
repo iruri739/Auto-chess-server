@@ -34,24 +34,32 @@ public class GameService {
      * @return 成功返回 ture 否则返回 false
      */
     public boolean matchGame(int playerId) throws Exception {
+        LOG.info("当前玩家列表：");
+        LOG.info(waitPlayerList.toString());
         //如果玩家已经在列表则检查是否已经完成匹配准备
         if (waitPlayerList.containsKey(playerId)) {
             if (waitPlayerList.get(playerId)) {
+                LOG.info("玩家 " + playerId + " 已在列表中，且已经开始游戏");
+                waitPlayerList.remove(playerId);
                 return true;
             } else {
+                LOG.info("玩家 " + playerId + " 已在列表中，但仍未准备");
                 return false;
             }
         }
         //如果玩家不在列表，检查列表是否为空，为空添加到列表中
         //列表不为空则寻找尚未完成匹配准备的玩家并创建游戏等待玩家准备
         if (waitPlayerList.size() == 0) {
+            LOG.info("匹配列表中无玩家，将玩家 " + playerId + " 加入列表");
             waitPlayerList.put(playerId, false);
             return false;
         } else {
+            LOG.info("当前列表已有玩家，寻找对手");
             Iterator<Map.Entry<Integer, Boolean>> iterator = waitPlayerList.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<Integer, Boolean> entry = iterator.next();
                 if (entry.getKey() != playerId) {
+                    LOG.info("找到对手！ID为 " + entry.getKey() + " 准备创建游戏！");
                     createGame(playerId, entry.getKey());
                     waitPlayerList.replace(entry.getKey(), true);
                     waitPlayerList.replace(playerId, true);

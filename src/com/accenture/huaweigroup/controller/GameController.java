@@ -79,11 +79,11 @@ public class GameController {
 
 
 
-    @GetMapping(value = "/getPlayerData")
-    public String getPlayerData(@RequestParam("playerId") int playerId){
-        String playerData = gameService.getPlayerDate(playerId).toString();
-        return  playerData;
-    }
+//    @GetMapping(value = "/getPlayerData")
+//    public String getPlayerData(@RequestParam("playerId") int playerId){
+//        String playerData = gameService.getPlayerDate(playerId).toString();
+//        return  playerData;
+//    }
 
     @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "返回", httpMethod = "GET")
     @GetMapping(value = "/getChessData")
