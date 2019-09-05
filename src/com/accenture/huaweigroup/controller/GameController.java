@@ -1,10 +1,10 @@
 package com.accenture.huaweigroup.controller;
 
 import com.accenture.huaweigroup.module.entity.*;
+import com.accenture.huaweigroup.module.bean.BattleData;
 import com.accenture.huaweigroup.service.ChessService;
 
 import com.accenture.huaweigroup.service.GameService;
-import com.accenture.huaweigroup.service.UserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/game")
@@ -68,11 +67,11 @@ public class GameController {
         return false;
     }
 
-    @ApiOperation(value = "获取初始游戏数据", notes = "调用接口获取初始玩家游戏数据", httpMethod = "GET")
-    @GetMapping("/getInitData")
-    public GameInitData getGameInitData(@RequestParam("playerId") int playerId) {
-        return gameService.getInitGameData(playerId);
-    }
+//    @ApiOperation(value = "获取初始游戏数据", notes = "调用接口获取初始玩家游戏数据", httpMethod = "GET")
+//    @GetMapping("/getInitData")
+//    public BattleData getGameInitData(@RequestParam("playerId") int playerId) {
+//        return gameService.getInitGameData(playerId);
+//    }
 
     @ApiOperation(value = "玩家战场准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
     @GetMapping("/gameStartCheck")
@@ -88,17 +87,28 @@ public class GameController {
         return gameService.changePlayerInventory(gameId, playerId);
     }
 
-    @ApiOperation(value = "上传准备数据至服务器", notes = "", httpMethod = "POST")
-    @PostMapping("/sendBattleData")
-    public PlayerBattleData sendBattleData(PlayerBattleData data) {
+    @ApiOperation(value = "检查是否可以进入战斗")
+    @GetMapping("/gameBattleCheck")
+    public boolean gameBattleCheck(int gameId, int playerId) {
+        return gameService.gamePrepareCheck(gameId, playerId);
+    }
 
-        return null;
+    @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "POST")
+    @PostMapping("/defaultDataModel")
+    public BattleData sendDefaultDataModel(int playerId) {
+        return gameService.getInitGameData(playerId);
+    }
+
+    @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")
+    @PostMapping("/battleDataApi")
+    public BattleData sendBattleData(@RequestBody BattleData data) {
+        return gameService.battleDataApi(data);
     }
 
 
     @GetMapping("/checkGameResult")
-    public String checkGameResult(@RequestParam("playerId") int playerId) {
-        return null;
+    public boolean checkGameResult(@RequestParam("playerId") int playerId) {
+        return false;
     }
 
 	

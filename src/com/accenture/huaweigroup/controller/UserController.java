@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/user")
 @Api(value = "用户接口", tags = "用户信息接口")
@@ -24,6 +26,12 @@ public class UserController {
     private class UserDTO {
         public String userName;
         public String userPwd;
+    }
+
+    @ApiOperation(value = "获取在线用户列表", notes = "获取用户id-用户名键值对格式在线用户列表")
+    @GetMapping("/getOnlineList")
+    public HashMap<Integer, String> getOnlineUserList() {
+        return userService.getOnlineUserList();
     }
 
     @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回true，否则返回false，发生错误状态码400,500", httpMethod = "GET")

@@ -1,5 +1,6 @@
-package com.accenture.huaweigroup.module.entity;
+package com.accenture.huaweigroup.module.bean;
 
+import com.accenture.huaweigroup.module.entity.Chess;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ public class Player {
     private static final int PLAYER_INIT_GOLD = 5;
 
     private int id;
+    private String name;
     private int hp = PLAYER_TOTAL_HP;
     private int gold = PLAYER_INIT_GOLD;
     private int winCount = 0;
@@ -23,32 +25,34 @@ public class Player {
     public Player() {
         super();
         this.id = 0;
-//        for (int i = 0; i < 5; ++i) {
-//            this.battleCards.add(null);
-//        }
     }
 
     public Player(int id) {
         super();
         this.id = id;
-//        for (int i = 0; i < 5; ++i) {
-//            this.battleCards.add(null);
-//        }
     }
-
 
     @Override
     public String toString() {
         return "Player{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", hp=" + hp +
                 ", gold=" + gold +
-                ", WinCount=" + winCount +
+                ", winCount=" + winCount +
                 ", state=" + state +
                 ", handCards=" + handCards +
                 ", battleCards=" + battleCards +
                 ", cardInventory=" + cardInventory +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getId() {

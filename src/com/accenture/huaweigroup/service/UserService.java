@@ -9,6 +9,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -92,6 +93,18 @@ public class UserService {
             userOnlineList.replace(userId, true);
             return true;
         }
+    }
+
+    public HashMap<Integer, String> getOnlineUserList() {
+        HashMap<Integer, String> list = new HashMap<>();
+        Iterator<Map.Entry<Integer, Boolean>> iterator = userOnlineList.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Boolean> entry = iterator.next();
+            if (entry.getValue()) {
+                list.put(entry.getKey(), userMapper.getUserById(entry.getKey()).getName());
+            }
+        }
+        return list;
     }
 
     /**

@@ -1,10 +1,12 @@
 package com.accenture.huaweigroup.service;
 
 import com.accenture.huaweigroup.module.entity.*;
+import com.accenture.huaweigroup.module.bean.*;
 import com.accenture.huaweigroup.module.mapper.GameRecordMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -130,6 +132,10 @@ public class GameService {
         gameRecordMapper.insert(new GameRecord(playerOneId, playerTwoId));
         GameRecord gameRecord = gameRecordMapper.findByPlayerId(playerOneId, playerTwoId);
         Game newGame = new Game(gameRecord.getRecordId(), playerOneId, playerTwoId);
+        newGame.getPlayerOne().setCardInventory(chessService.getRandomCards());
+        newGame.getPlayerOne().setName(userService.getUserById(playerOneId).getName());
+        newGame.getPlayerTwo().setCardInventory(chessService.getRandomCards());
+        newGame.getPlayerTwo().setName(userService.getUserById(playerTwoId).getName());
         gameList.put(newGame.getId(), newGame);
     }
 
@@ -171,69 +177,26 @@ public class GameService {
         return null;
     }
 
-    //检查玩家游戏状态
-//    public String playerStateCheck(int playerId) {
-//        Game game = findGameByPlayerId(playerId);
-//        if (game != null) {
-//            PlayerState state = game.getPlayer(playerId).getState();
-//            switch (state) {
-//                case PREPARE:
-//                    return "prepare";
-//                case BATTLE:
-//                    return "battle";
-//                case REDAY:
-//                    return "ready";
-//            }
-//        }
-//        return "none";
-//    }
-
     //获取游戏初始数据
-    public GameInitData getInitGameData(int playerId) {
-        GameInitData gameInitData = new GameInitData();
+    public BattleData getInitGameData(int playerId) {
         Game game = findGameByPlayerId(playerId);
-        Player playerOne = game.getPlayer(playerId);
-        Player playerTwo = game.getConponentPlayer(playerId);
-
-        gameInitData.setGameId(game.getId());
-        gameInitData.setOpponentPlayerId(playerTwo.getId());
-        User user = userService.getUserById(playerTwo.getId());
-        gameInitData.setOpponentPlayerName(user.getName());
-        PlayerData playerData = new PlayerData();
-        playerData.setId(playerOne.getId());
-        playerData.setHp(playerOne.getHp());
-        playerData.setGold(playerOne.getGold());
-        playerData.setHandCards(playerOne.getHandCards());
-        playerData.setBattleCards(playerOne.getBattleCards());
-        playerData.setCardInventory(chessService.getRandomCards());
-        gameInitData.setPlayerData(playerData);
-
-        return gameInitData;
+        game.getPlayerOne().setCardInventory(chessService.getRandomCards());
+        game.getPlayerTwo().setCardInventory(chessService.getRandomCards());
+        BattleData data = new BattleData(game);
+        return data;
     }
 
-    public int getTime(int gameId, int playerId, int type) {
-
-        return 0;
-    }
-
-    public boolean updateGameRecord(int gameId, int playerId) {
-
-        return false;
-    }
-
-    //获取玩家数据
-    public PlayerBattleData getPlayerBattleData(PlayerBattleData data) {
+    //获取并更新玩家数据
+    public BattleData battleDataApi(BattleData data) {
         Game game = gameList.get(data.getGameId());
-        PlayerData playerData = data.getPlayerData();
-        Player player = game.getPlayer(playerData.getId());
-        player.setGold(playerData.getGold());
-        return null;
+        return new BattleData(game);
     }
 
     //计时轮训gamelist清除异常游戏并做异常处理
-    private void cycleCheckGame() {
-
-    }
+//    @Scheduled(initialDelay = 1000, fixedRate = 60*1000)
+//    private void cycleCheckGame() {
+//
+//    }
 
 
 }
