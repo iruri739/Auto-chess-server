@@ -1,9 +1,6 @@
 package com.accenture.huaweigroup.controller;
 
-import com.accenture.huaweigroup.module.entity.Chess;
-import com.accenture.huaweigroup.module.entity.Game;
-import com.accenture.huaweigroup.module.entity.GameInitData;
-import com.accenture.huaweigroup.module.entity.PlayerData;
+import com.accenture.huaweigroup.module.entity.*;
 import com.accenture.huaweigroup.service.ChessService;
 
 import com.accenture.huaweigroup.service.GameService;
@@ -77,19 +74,27 @@ public class GameController {
         return gameService.getInitGameData(playerId);
     }
 
-    @ApiOperation(value = "玩家准备检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
+    @ApiOperation(value = "玩家战场准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
     @GetMapping("/gameStartCheck")
     public boolean gameStartCheck(int gameId, int playerId) {
-        return gameService.gameStartCheck(gameId, playerId);
+        return gameService.gamePrepareCheck(gameId, playerId);
     }
 
-    @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "返回", httpMethod = "GET")
+    @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "扣除玩家2金币刷新待选区卡牌，无法刷新则返回null", httpMethod = "GET")
     @GetMapping(value = "/getChessData")
     public ArrayList<Chess> getChessData(@RequestParam("gameId") int gameId,
                                          @RequestParam("playerId") int playerId)
     {
-        return chessService.getRandomCards();
+        return gameService.changePlayerInventory(gameId, playerId);
     }
+
+    @ApiOperation(value = "上传准备数据至服务器", notes = "", httpMethod = "POST")
+    @PostMapping("/sendBattleData")
+    public PlayerBattleData sendBattleData(PlayerBattleData data) {
+
+        return null;
+    }
+
 
     @GetMapping("/checkGameResult")
     public String checkGameResult(@RequestParam("playerId") int playerId) {

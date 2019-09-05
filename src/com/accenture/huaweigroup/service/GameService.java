@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -136,7 +133,13 @@ public class GameService {
         gameList.put(newGame.getId(), newGame);
     }
 
-    public boolean gameStartCheck(int gameId, int playerId) {
+    /**
+     * 检查玩家是否可以进入游戏准备阶段
+     * @param gameId 游戏ID
+     * @param playerId 玩家ID
+     * @return
+     */
+    public boolean gamePrepareCheck(int gameId, int playerId) {
         Game game = gameList.get(gameId);
         Player player = game.getPlayer(playerId);
         if (player.getState() != PlayerState.PREPARE) {
@@ -148,6 +151,24 @@ public class GameService {
             }
         }
         return false;
+    }
+
+    /**
+     * 刷新玩家待选区卡牌，金币不够或发生错误则返回null
+     * @param gameId
+     * @param playerId
+     * @return
+     */
+    public ArrayList<Chess> changePlayerInventory(int gameId, int playerId) {
+        Game game = gameList.get(gameId);
+        Player player = game.getPlayer(playerId);
+        if (player.getGold() >= 2) {
+            player.setGold(player.getGold() - 2);
+            ArrayList<Chess> newInventory = chessService.getRandomCards();
+            player.setCardInventory(newInventory);
+            return newInventory;
+        }
+        return null;
     }
 
     //检查玩家游戏状态
@@ -201,8 +222,11 @@ public class GameService {
     }
 
     //获取玩家数据
-    public PlayerBattleData getPlayerBattleData(int gameId, int playerId) {
-
+    public PlayerBattleData getPlayerBattleData(PlayerBattleData data) {
+        Game game = gameList.get(data.getGameId());
+        PlayerData playerData = data.getPlayerData();
+        Player player = game.getPlayer(playerData.getId());
+        player.setGold(playerData.getGold());
         return null;
     }
 

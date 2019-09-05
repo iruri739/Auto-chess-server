@@ -26,7 +26,7 @@ public class UserController {
         public String userPwd;
     }
 
-    @ApiOperation(value = "用户登录", notes = "验证用户信息", httpMethod = "GET")
+    @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回true，否则返回false，发生错误状态码400,500", httpMethod = "GET")
     @GetMapping("/login")
     public boolean loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
         boolean state = false;
@@ -42,7 +42,7 @@ public class UserController {
         return state;
     }
 
-    @ApiOperation(value = "用户注册", notes = "注册用户信息", httpMethod = "POST")
+    @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回true，否则返回false，发生错误状态码400,500", httpMethod = "POST")
     @PostMapping(value = "/register")
     public boolean registerUser(@RequestBody UserDTO info) {
         try {
@@ -57,7 +57,7 @@ public class UserController {
         return false;
     }
 
-    @ApiOperation(value = "用户登录状态检测", notes = "检测用户在线状态", httpMethod = "GET")
+    @ApiOperation(value = "用户登录状态检测", notes = "检测用户在线状态，在线则返回true，离线则返回false", httpMethod = "GET")
     @GetMapping(value = "/check")
     public boolean checkUser(@RequestParam("userId") int userId) {
         try {
@@ -73,7 +73,7 @@ public class UserController {
         return false;
     }
 
-    @ApiOperation(value = "注销登录", notes = "用户登出账户", httpMethod = "GET")
+    @ApiOperation(value = "注销登录", notes = "用户登出账户，成功登出返回true，否则返回false", httpMethod = "GET")
     @GetMapping(value = "/logout")
     public boolean logOutUser(@RequestParam("userId") int userId) {
         try {

@@ -10,12 +10,15 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class Game {
     private static final int PLAYER_DEFAULT_PREPARETIME = 30;
     private static final int BATTLE_DEFAULT_TIME = 60;
-
+    private static final ScheduledExecutorService scheduleService = Executors.newSingleThreadScheduledExecutor();
     @Autowired
     private ChessService chessService;
 
@@ -28,6 +31,46 @@ public class Game {
     private boolean startBattle = false;
     private GameState state = GameState.CREATED;
     private ConcurrentHashMap<Integer, Player> playerList = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, Player> cachedPlayerList = new ConcurrentHashMap<>();
+
+    private Runnable checkTimeState = new Runnable() {
+        @Override
+        public void run() {
+            if (checkPlayerState(PlayerState.PREPARE)) {
+                startPrepare = true;
+            }
+            if (checkPlayerState(PlayerState.BATTLE)) {
+                startBattle = true;
+            }
+        }
+    };
+    private Runnable prepareRun = new Runnable() {
+        @Override
+        public void run() {
+            if (startPrepare) {
+                prepareTime--;
+                System.out.println("剩余准备时间：" + prepareTime);
+                if (prepareTime == 0) {
+                    startPrepare = false;
+                    prepareTime = PLAYER_DEFAULT_PREPARETIME;
+                }
+            }
+        }
+    };
+
+    private Runnable battleRun = new Runnable() {
+        @Override
+        public void run() {
+            if (startBattle) {
+                battleTime--;
+                System.out.println("剩余战斗时间：" + battleTime);
+                if (battleTime == 0) {
+                    startBattle = false;
+                    battleTime = BATTLE_DEFAULT_TIME;
+                }
+            }
+        }
+    };
 
     public Game() {
         super();
@@ -38,42 +81,11 @@ public class Game {
         this.id = id;
         this.playerList.put(playerOneId, new Player(playerOneId));
         this.playerList.put(playerTwoId, new Player(playerTwoId));
-    }
+        scheduleService.scheduleAtFixedRate(checkTimeState, 2, 1, TimeUnit.SECONDS);
+        scheduleService.scheduleAtFixedRate(prepareRun, 2, 1, TimeUnit.SECONDS);
+        scheduleService.scheduleAtFixedRate(battleRun, 2, 1, TimeUnit.SECONDS);
 
-    @Scheduled(fixedDelay = 1000)
-    private void checkTimeState() {
-        if (checkPlayerState(PlayerState.PREPARE)) {
-            startPrepare = true;
-        }
-        if (checkPlayerState(PlayerState.BATTLE)) {
-            startBattle = true;
-        }
     }
-
-    @Scheduled(initialDelay = 2000, fixedDelay = 1000)
-    private void circlePrepareTime() {
-        if (startPrepare) {
-            prepareTime--;
-            System.out.println("剩余准备时间：" + prepareTime);
-            if (prepareTime == 0) {
-                startPrepare = false;
-                prepareTime = PLAYER_DEFAULT_PREPARETIME;
-            }
-        }
-    }
-
-    @Scheduled(initialDelay = 2000, fixedDelay = 1000)
-    private void circleBattleTime() {
-        if (startBattle) {
-            battleTime--;
-            System.out.println("剩余战斗时间：" + battleTime);
-            if (battleTime == 0) {
-                startBattle = false;
-                battleTime = BATTLE_DEFAULT_TIME;
-            }
-        }
-    }
-
 
     public boolean containPlayer(int playerId) {
         for (Player player : playerList.values()) {
@@ -90,7 +102,11 @@ public class Game {
                 return false;
             }
         }
-        return true;
+        if (!playerList.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Player getPlayer(int playerId) {
@@ -111,7 +127,7 @@ public class Game {
         return 0;
     }
 
-    //花费金币更换玩家待选区卡牌，会返回是否成功
+    //花费金币更换玩家待选区卡牌
     public boolean randInventory(int userId) {
         return false;
     }
