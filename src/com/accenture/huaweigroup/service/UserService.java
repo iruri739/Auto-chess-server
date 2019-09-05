@@ -22,16 +22,16 @@ public class UserService {
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     //登录验证，检查用户是否存在
-    //存在返回 true 并将用户id加入在线列表否则返回 false
-    public boolean loginCheck(String userName, String userPwd) throws Exception {
+    //存在返回 ID 并将用户id加入在线列表否则返回 false
+    public String loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         if (user != null) {
             if (user.getPwd().equals(userPwd)) {
                 ResManager.addUserToList(user.getId(), true);
-                return true;
+                return String.valueOf(user.getId());
             }
         }
-        return false;
+        return "false";
     }
 
     //用户注册，首先检查注册用户名是否已经存在

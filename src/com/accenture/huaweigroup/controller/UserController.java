@@ -31,13 +31,13 @@ public class UserController {
         return userService.getOnlineUserList();
     }
 
-    @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回true，否则返回false，发生错误状态码400,500", httpMethod = "GET")
+    @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回false", httpMethod = "GET")
     @GetMapping("/login")
-    public boolean loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
-        boolean state = false;
+    public String loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
+        String state = "false";
         try {
             state = userService.loginCheck(userName, userPwd);
-            if (state) {
+            if (!state.equals("false")) {
                 LOG.info("用户[" + userName + "] 登录成功！");
             }
         } catch (Exception e) {

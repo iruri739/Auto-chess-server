@@ -38,16 +38,22 @@ public class GameController {
         return false;
     }
 
-    @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "POST")
-    @PostMapping("/defaultDataModel")
-    public BattleData sendDefaultDataModel(int playerId) {
+    @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "GET")
+    @GetMapping("/defaultDataModel")
+    public BattleData sendDefaultDataModel(@RequestParam("playerId") int playerId) {
         return gameService.getInitGameData(playerId);
     }
 
     @ApiOperation(value = "进入准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
     @GetMapping("/gamePrepareCheck")
-    public boolean gameStartCheck(String gameId, int playerId) {
-        return gameService.gamePrepareCheck(gameId, playerId);
+    public String gameCircleCheck(@RequestParam("gameId") String gameId,@RequestParam("playerId") int playerId) {
+        return gameService.gameGoPrepareCheck(gameId, playerId);
+    }
+
+    @ApiOperation(value = "进入战斗阶段检测", notes = "检测玩家是否可以进入战斗阶段", httpMethod = "GET")
+    @GetMapping("/gameBattleCheck")
+    public boolean gameBattleCheck(@RequestParam("gameId") String gameId, @RequestParam("playerId") int playerId) {
+        return gameService.gameBattleCheck(gameId, playerId);
     }
 
     @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "扣除玩家2金币刷新待选区卡牌，无法刷新则返回null", httpMethod = "GET")
@@ -58,18 +64,12 @@ public class GameController {
         return gameService.changePlayerInventory(gameId, playerId);
     }
 
-    @ApiOperation(value = "进入战斗阶段检测", notes = "检测玩家是否可以进入战斗阶段", httpMethod = "GET")
-    @GetMapping("/gameBattleCheck")
-    public boolean gameBattleCheck(String gameId, int playerId) {
-        return gameService.gamePrepareCheck(gameId, playerId);
-    }
-
-
-
     @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")
     @PostMapping("/battleDataApi")
-    public BattleData sendBattleData(@RequestBody BattleData data) {
-        return gameService.battleDataApi(data);
+    public BattleData sendBattleData(@RequestParam("gameId") String gameId,
+                                     @RequestParam("playerId") int playerId,
+                                     @RequestBody BattleData data) {
+        return gameService.battleDataApi(gameId , playerId, data);
     }
 
 

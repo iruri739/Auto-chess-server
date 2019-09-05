@@ -41,16 +41,23 @@ public class Game {
         this.playerTwo.setId(playerTwoId);
     }
 
-    @Scheduled(initialDelay = 0, fixedRate = 1000)
-    private void readyToPrepare() {
-        if (state == GameState.PREPARE) {
-            state = GameState.GAMING;
-        }
-    }
+//    @Scheduled(initialDelay = 0, fixedRate = 1000)
+//    private void readyToPrepare() {
+//        if (state != GameState.PREPARE) {
+//            state = GameState.GAMING;
+//        } else if (state == GameState.PREPARE) {
+//
+//        }
+//    }
 
     @Scheduled(initialDelay = 0, fixedRate = 1000)
-    private void prePareToBattle() {
-        
+    private void stateChange() {
+        if (state == GameState.PREPARE) {
+
+        }
+        if (state == GameState.BATTLE) {
+            fight();
+        }
     }
 
     public boolean refreshData(BattleData data) {
@@ -100,12 +107,8 @@ public class Game {
 
     //双方玩家战场上卡牌的战斗处理
     public int fight() {
-        return 0;
-    }
 
-    //花费金币更换玩家待选区卡牌
-    public boolean randInventory(int userId) {
-        return false;
+        return 0;
     }
 
     //获取玩家手牌

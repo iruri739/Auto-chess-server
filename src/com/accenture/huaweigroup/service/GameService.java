@@ -86,22 +86,35 @@ public class GameService {
      * @param playerId 玩家ID
      * @return
      */
-    public boolean gamePrepareCheck(String gameId, int playerId) {
+    public String gameGoPrepareCheck(String gameId, int playerId) {
         Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
+        if (game.getState() == GameState.FINISHED) {
+            if (game.getPlayerOne().getHp() > 0) {
+                return String.valueOf(game.getPlayerOne().getId());
+            } else {
+                return String.valueOf(game.getPlayerTwo().getId());
+            }
+        }
         if (player.getState() != PlayerState.PREPARE) {
             player.setState(PlayerState.PREPARE);
-            return false;
+            return "false";
         } else {
             if (game.checkPlayerState(PlayerState.PREPARE)) {
                 game.setState(GameState.PREPARE);
-                return true;
+                return "true";
             }
         }
-        return false;
+        return "false";
     }
 
 
+    /**
+     * 检查玩家是否可以进入战斗状态
+     * @param gameId
+     * @param playerId
+     * @return
+     */
     public boolean gameBattleCheck(String gameId, int playerId) {
         Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
@@ -110,7 +123,7 @@ public class GameService {
             return false;
         } else {
             if (game.checkPlayerState(PlayerState.BATTLE)) {
-                game.setState(GameState.PREPARE);
+                game.setState(GameState.BATTLE);
                 return true;
             }
         }
@@ -118,7 +131,7 @@ public class GameService {
     }
 
     /**
-     * 刷新玩家待选区卡牌，金币不够或发生错误则返回null
+     * 刷新玩家待选区卡牌，金币不够或发生错误则返回空数组
      * @param gameId
      * @param playerId
      * @return
@@ -132,7 +145,7 @@ public class GameService {
             player.setCardInventory(newInventory);
             return newInventory;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     //获取游戏初始数据
@@ -146,10 +159,10 @@ public class GameService {
 
 
     //获取并更新玩家数据
-    public BattleData battleDataApi(BattleData data) {
-        Game game = ResManager.findGameById(data.getGameId());
-        game.refreshData(data);
-        return new BattleData(game);
+    public BattleData battleDataApi(String gameId, int playerId, BattleData data) {
+//        Game game = ResManager.findGameById(data.getGameId());
+//        game.refreshData(data);
+        return new BattleData();
     }
 
     public String checkGameState(BattleData data) {
