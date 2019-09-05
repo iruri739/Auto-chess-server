@@ -47,19 +47,20 @@ public class UserController {
         return state;
     }
 
-    @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回true，否则返回false，发生错误状态码400,500", httpMethod = "POST")
+    @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回ID，否则返回false，发生错误状态码400,500", httpMethod = "POST")
     @PostMapping(value = "/register")
-    public boolean registerUser(@RequestBody UserDTO info) {
+    public String registerUser(@RequestBody UserDTO info) {
         try {
-            if (userService.register(info.userName, info.userPwd)) {
+            String result = userService.register(info.userName, info.userPwd);
+            if (!result.equals("false")) {
                 LOG.info("用户[" + info.userName + "] 注册成功！");
-                return true;
+                return result;
             }
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("用户[" + info.userName + "] 注册过程发送错误！！！");
         }
-        return false;
+        return "false";
     }
 
     @ApiOperation(value = "用户登录状态检测", notes = "检测用户在线状态，在线则返回true，离线则返回false", httpMethod = "GET")

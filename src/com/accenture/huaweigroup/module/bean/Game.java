@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -109,10 +110,28 @@ public class Game {
         }
     }
 
-    //双方玩家战场上卡牌的战斗处理
-    public int fight() {
 
-        return 0;
+    //双方玩家战场上卡牌的战斗处理
+    private void fight() {
+        ArrayList<Chess> chessOne = playerOne.getBattleCards();
+        ArrayList<Chess> chessTwo = playerTwo.getBattleCards();
+        Random random = new Random();
+        if (chessOne.size() >= chessTwo.size()) {
+            for (int i = 0; i < chessOne.size(); ++i) {
+                if (i < chessTwo.size()) {
+                    int first = random.nextInt(2) + 1;
+                    if (first == 1) {
+
+                    } else {
+
+                    }
+                } else {
+
+                }
+            }
+        } else {
+
+        }
     }
 
     //获取玩家手牌
@@ -209,7 +228,7 @@ public class Game {
     public void setPrepareTime(int prepareTime) {
         this.prepareTime = prepareTime;
     }
-    
+
     public int getBattleTime() {
         return battleTime;
     }

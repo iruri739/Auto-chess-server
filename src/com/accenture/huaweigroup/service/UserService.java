@@ -36,14 +36,15 @@ public class UserService {
 
     //用户注册，首先检查注册用户名是否已经存在
     //如果存在则返回 false 否则注册用户并返回 true
-    public boolean register(String userName, String userPwd) throws Exception {
+    public String register(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         if (user == null) {
             user = new User(userName, userPwd, null, userName);
             userMapper.insert(user);
-            return true;
+            user = userMapper.getUserByName(userName);
+            return String.valueOf(user.getId());
         }
-        return false;
+        return "false";
     }
 
     /**
