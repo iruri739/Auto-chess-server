@@ -54,6 +54,8 @@ public class GameService {
             int opponentId = ResManager.findMatch(playerId);
             if (opponentId != 0) {
                 createGame(playerId, opponentId);
+                ResManager.delFromMatch(playerId);
+                ResManager.delFromMatch(opponentId);
                 return true;
             }
         }
@@ -110,6 +112,8 @@ public class GameService {
     public void createGame(int playerOneId, int playerTwoId) {
         gameRecordMapper.insert(new GameRecord(playerOneId, playerTwoId));
         GameRecord gameRecord = gameRecordMapper.getInitRecord(playerOneId, playerTwoId);
+        gameRecord.setGameId(gameRecord.getRecordId());
+        gameRecordMapper.update(gameRecord);
         Game newGame = new Game(gameRecord.getRecordId(), playerOneId, playerTwoId);
         newGame.getPlayerOne().setCardInventory(chessService.getRandomCards());
         newGame.getPlayerOne().setName(userService.getUserById(playerOneId).getName());

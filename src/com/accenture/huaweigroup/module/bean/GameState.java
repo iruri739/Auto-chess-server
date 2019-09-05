@@ -1,4 +1,4 @@
-package com.accenture.huaweigroup.module.entity;
+package com.accenture.huaweigroup.module.bean;
 
 import org.springframework.stereotype.Component;
 

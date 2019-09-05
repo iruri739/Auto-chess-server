@@ -1,7 +1,7 @@
 package com.accenture.huaweigroup.module.bean;
 
 import com.accenture.huaweigroup.module.entity.Chess;
-import com.accenture.huaweigroup.module.entity.GameState;
+import com.accenture.huaweigroup.module.bean.GameState;
 import com.accenture.huaweigroup.service.ChessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

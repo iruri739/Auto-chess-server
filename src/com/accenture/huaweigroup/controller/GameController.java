@@ -28,7 +28,7 @@ public class GameController {
     @Autowired
     private ChessService chessService;
 
-    @ApiOperation(value = "玩家首次匹配", notes = "调用该接口", httpMethod = "GET")
+    @ApiOperation(value = "玩家匹配", notes = "调用该接口", httpMethod = "GET")
     @GetMapping("/matchGame")
     public boolean matchGame(@RequestParam("playerId") int playerId) {
         try {
@@ -73,6 +73,11 @@ public class GameController {
 //    public BattleData getGameInitData(@RequestParam("playerId") int playerId) {
 //        return gameService.getInitGameData(playerId);
 //    }
+    @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "POST")
+    @PostMapping("/defaultDataModel")
+    public BattleData sendDefaultDataModel(int playerId) {
+        return gameService.getInitGameData(playerId);
+    }
 
     @ApiOperation(value = "玩家战场准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
     @GetMapping("/gameStartCheck")
@@ -94,11 +99,7 @@ public class GameController {
         return gameService.gamePrepareCheck(gameId, playerId);
     }
 
-    @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "POST")
-    @PostMapping("/defaultDataModel")
-    public BattleData sendDefaultDataModel(int playerId) {
-        return gameService.getInitGameData(playerId);
-    }
+
 
     @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")
     @PostMapping("/battleDataApi")
@@ -107,10 +108,10 @@ public class GameController {
     }
 
 
-    @GetMapping("/checkGameBattle")
-    public boolean checkGameBattle(@RequestParam("playerId") int playerId) {
-        return false;
-    }
+//    @GetMapping("/checkGameBattle")
+//    public boolean checkGameBattle(@RequestParam("playerId") int playerId) {
+//        return false;
+//    }
 
 	
 }

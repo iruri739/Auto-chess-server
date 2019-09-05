@@ -88,6 +88,10 @@ public class ResManager {
         matchList.add(playerId);
     }
 
+    public static void delFromMatch(int playerId) {
+        matchList.remove(playerId);
+    }
+
     public static int findMatch(int playerId) {
         for (int id : matchList) {
             if (id != playerId) {
