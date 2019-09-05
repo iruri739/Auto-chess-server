@@ -19,16 +19,17 @@ public class GameService {
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
 
     @Autowired
-    private GameRecordMapper gameRecordMapper;
+    private static GameRecordMapper gameRecordMapper;
+
     @Autowired
     private ChessService chessService;
     @Autowired
     private UserService userService;
 
-    //玩家匹配列表
-    private ConcurrentHashMap<Integer, Boolean> waitPlayerList = new ConcurrentHashMap<>();
-    //游戏列表
-    private ConcurrentHashMap<Integer, Game> gameList = new ConcurrentHashMap<>();
+//    //玩家匹配列表
+//    private ConcurrentHashMap<Integer, Boolean> waitPlayerList = new ConcurrentHashMap<>();
+//    //游戏列表
+//    private ConcurrentHashMap<Integer, Game> gameList = new ConcurrentHashMap<>();
 
     /**
      * 匹配玩家机制
@@ -36,8 +37,7 @@ public class GameService {
      * @return 成功返回 ture 否则返回 false
      */
     public boolean matchGame(int playerId) throws Exception {
-        LOG.info("当前玩家列表：");
-        LOG.info(waitPlayerList.toString());
+        ResManager.showMatchList();
         //如果玩家已经在列表则检查是否已经完成匹配准备
         if (ResManager.isMatching(playerId)) {
             if (ResManager.getMatchState(playerId)) {
@@ -52,43 +52,18 @@ public class GameService {
         //列表不为空则寻找尚未完成匹配准备的玩家并创建游戏等待玩家准备
         if (ResManager.getWaitListSize() == 0) {
             LOG.info("匹配列表中无玩家，将玩家 " + playerId + " 加入列表");
-            ResManager.waitMatch(playerId);
+            ResManager.joinMatch(playerId);
             return false;
         } else {
             LOG.info("当前列表已有玩家，寻找对手");
-            ResManager.waitMatch(playerId);//2019年9月5日14:13:31
+            ResManager.joinMatch(playerId);//2019年9月5日14:13:31
             int opponentId = ResManager.findOpponent(playerId);
             if (opponentId != 0) {
                 createGame(playerId, opponentId);
                 return true;
             }
-//            Iterator<Map.Entry<Integer, Boolean>> iterator = waitPlayerList.entrySet().iterator();
-//            while (iterator.hasNext()) {
-//                Map.Entry<Integer, Boolean> entry = iterator.next();
-//                if (entry.getKey() != playerId && !entry.getValue()) {
-//                    LOG.info("找到对手！ID为 " + entry.getKey() + " 准备创建游戏！");
-//                    createGame(playerId, entry.getKey());
-//                    waitPlayerList.replace(entry.getKey(), true);
-//                    waitPlayerList.replace(playerId, true);
-//                    break;
-//                }
-//            }
         }
         return false;
-    }
-
-    /**
-     * 根据用户id寻找游戏id
-     * @param playerId
-     * @return
-     */
-    private Game findGameByPlayerId(int playerId) {
-        for (Game game : gameList.values()) {
-            if (game.containPlayer(playerId)) {
-                return game;
-            }
-        }
-        return null;
     }
 
     /**
@@ -97,7 +72,7 @@ public class GameService {
      * @return
      */
     public boolean matchReadyCheck(int playerId) {
-        Game game = findGameByPlayerId(playerId);
+        Game game = ResManager.findGameByPlayer(playerId);
         if (game == null) {
             return false;
         }
@@ -106,8 +81,12 @@ public class GameService {
             return false;
         } else {
             if (game.checkPlayerState(PlayerState.REDAY)) {
-                waitPlayerList.remove(playerId);
-//                GameRecord record = gameRecordMapper.
+                ResManager.matchFinish(playerId);
+                game.getPlayerOne().setState(PlayerState.PREPARE);
+                game.getPlayerTwo().setState(PlayerState.PREPARE);
+                GameRecord gameRecord = gameRecordMapper.findById(game.getId());
+                gameRecord.setGameId(game.getId());
+                gameRecordMapper.update(gameRecord);
                 return true;
             }
         }
@@ -122,8 +101,8 @@ public class GameService {
      * @throws Exception
      */
     public boolean cancelMatch(int playerId) throws Exception {
-        if (waitPlayerList.containsKey(playerId)) {
-            waitPlayerList.remove(playerId);
+        if (ResManager.isMatching(playerId)) {
+            ResManager.cancelMatch(playerId);
             return true;
         }
         return false;
@@ -136,13 +115,13 @@ public class GameService {
      */
     public void createGame(int playerOneId, int playerTwoId) {
         gameRecordMapper.insert(new GameRecord(playerOneId, playerTwoId));
-        GameRecord gameRecord = gameRecordMapper.findByPlayerId(playerOneId, playerTwoId);
+        GameRecord gameRecord = gameRecordMapper.getInitRecord(playerOneId, playerTwoId);
         Game newGame = new Game(gameRecord.getRecordId(), playerOneId, playerTwoId);
         newGame.getPlayerOne().setCardInventory(chessService.getRandomCards());
         newGame.getPlayerOne().setName(userService.getUserById(playerOneId).getName());
         newGame.getPlayerTwo().setCardInventory(chessService.getRandomCards());
         newGame.getPlayerTwo().setName(userService.getUserById(playerTwoId).getName());
-        gameList.put(newGame.getId(), newGame);
+        ResManager.addToGameList(newGame);
     }
 
     /**
@@ -152,7 +131,7 @@ public class GameService {
      * @return
      */
     public boolean gamePrepareCheck(int gameId, int playerId) {
-        Game game = gameList.get(gameId);
+        Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
         if (player.getState() != PlayerState.PREPARE) {
             player.setState(PlayerState.PREPARE);
@@ -172,7 +151,7 @@ public class GameService {
      * @return
      */
     public ArrayList<Chess> changePlayerInventory(int gameId, int playerId) {
-        Game game = gameList.get(gameId);
+        Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
         if (player.getGold() >= 2) {
             player.setGold(player.getGold() - 2);
@@ -185,7 +164,7 @@ public class GameService {
 
     //获取游戏初始数据
     public BattleData getInitGameData(int playerId) {
-        Game game = findGameByPlayerId(playerId);
+        Game game = ResManager.findGameByPlayer(playerId);
         game.getPlayerOne().setCardInventory(chessService.getRandomCards());
         game.getPlayerTwo().setCardInventory(chessService.getRandomCards());
         BattleData data = new BattleData(game);
@@ -194,7 +173,8 @@ public class GameService {
 
     //获取并更新玩家数据
     public BattleData battleDataApi(BattleData data) {
-        Game game = gameList.get(data.getGameId());
+
+        Game game = ResManager.findGameById(data.getGameId());
         game.refreshData(data);
         return new BattleData(game);
     }
@@ -205,7 +185,7 @@ public class GameService {
 
     public String checkBattleState(BattleData data) {
         if (data.getState() == 0) {
-            Game game = gameList.get(data.getGameId());
+            Game game = ResManager.findGameById(data.getGameId());
             game.setRounds(game.getRounds() + 1);
 
         }

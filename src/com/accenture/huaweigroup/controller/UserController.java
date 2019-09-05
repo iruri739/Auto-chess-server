@@ -1,5 +1,6 @@
 package com.accenture.huaweigroup.controller;
 
+import com.accenture.huaweigroup.module.bean.UserDTO;
 import com.accenture.huaweigroup.module.entity.User;
 import com.accenture.huaweigroup.service.UserService;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/user")
 @Api(value = "用户接口", tags = "用户信息接口")
 public class UserController {
@@ -22,11 +24,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    private class UserDTO {
-        public String userName;
-        public String userPwd;
-    }
 
     @ApiOperation(value = "获取在线用户列表", notes = "获取用户id-用户名键值对格式在线用户列表")
     @GetMapping("/getOnlineList")

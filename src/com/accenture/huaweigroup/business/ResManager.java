@@ -1,8 +1,11 @@
 package com.accenture.huaweigroup.business;
 
 import com.accenture.huaweigroup.module.bean.Game;
+import com.accenture.huaweigroup.module.mapper.GameRecordMapper;
+import com.accenture.huaweigroup.module.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -66,8 +69,6 @@ public class ResManager {
 
     //玩家匹配列表
     private static ConcurrentHashMap<Integer, Boolean> waitPlayerList = new ConcurrentHashMap<>();
-    //游戏列表
-    private static ConcurrentHashMap<Integer, Game> gameList = new ConcurrentHashMap<>();
 
     public static boolean isMatching(int playerId) {
         return waitPlayerList.containsKey(playerId);
@@ -77,8 +78,21 @@ public class ResManager {
         return waitPlayerList.get(playerId);
     }
 
-    public static void waitMatch(int playerId) {
+    public static void showMatchList() {
+        LOG.info("当前玩家列表：");
+        LOG.info(waitPlayerList.toString());
+    }
+
+    public static void joinMatch(int playerId) {
         waitPlayerList.put(playerId, false);
+    }
+
+    public static void matchFinish(int playerId) {
+        waitPlayerList.remove(playerId);
+    }
+
+    public static void cancelMatch(int playerId) {
+        matchFinish(playerId);
     }
 
     public static void changeMatchState(int playerId, boolean state) {
@@ -101,6 +115,28 @@ public class ResManager {
 
     public static int getWaitListSize() {
         return waitPlayerList.size();
+    }
+
+    //游戏列表
+    private static ConcurrentHashMap<Integer, Game> gameList = new ConcurrentHashMap<>();
+
+    public static Game findGameByPlayer(int playerId) {
+        Iterator<Map.Entry<Integer, Game>> iterator = gameList.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Game> entry = iterator.next();
+            if (entry.getValue().getPlayer(playerId) != null) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    public static Game findGameById(int gameId) {
+        return gameList.get(gameId);
+    }
+
+    public static void addToGameList(Game game) {
+        gameList.put(game.getId(), game);
     }
 
 }

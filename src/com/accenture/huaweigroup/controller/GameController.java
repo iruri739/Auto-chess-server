@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/game")
 @Api(value = "游戏逻辑", tags = "游戏逻辑接口")
 public class GameController {

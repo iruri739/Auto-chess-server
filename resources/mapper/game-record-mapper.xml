@@ -15,12 +15,17 @@
     </resultMap>
 
 
-    <select id="findByGameId" parameterType="int" resultMap="getGameEntityResultMap">
-        select * from game where game_id = #{gameId}
+    <select id="findById" parameterType="int" resultMap="getGameEntityResultMap">
+        select * from game where record_id = #{recordId}
     </select>
 
-    <select id="findByPlayerId" parameterType="int" resultMap="getGameEntityResultMap">
-        select * from game where (player_one_id = #{playerOneId} and player_two_id = #{playerTwoId}) and game_state = 0
+<!--    <select id="findByPlayerId" parameterType="int" resultMap="getGameEntityResultMap">-->
+<!--        select * from game where (player_one_id = #{playerOneId} and player_two_id = #{playerTwoId}) and game_state = 0-->
+<!--    </select>-->
+
+    <select id="getInitRecord" resultMap="getGameEntityResultMap">
+        select * from game where (player_one_id = #{playerOneId} and player_two_id = #{playerTwoId})
+            and (game_state = 0 and record_id != game_id)
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="recordId" parameterType="com.accenture.huaweigroup.module.entity.GameRecord">

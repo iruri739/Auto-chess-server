@@ -10,7 +10,9 @@ public interface GameRecordMapper {
 
     void update(GameRecord gameRecord);
 
-    GameRecord findByPlayerId(int playerOneId, int playerTwoId);
+//    GameRecord findByPlayerId(int playerOneId, int playerTwoId);
 
-    GameRecord findByGameId(int gameId);
+    GameRecord getInitRecord(int playerOneId, int playerTwoId);
+
+    GameRecord findById(int recordId);
 }
