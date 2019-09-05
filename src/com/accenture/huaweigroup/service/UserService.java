@@ -1,5 +1,6 @@
 package com.accenture.huaweigroup.service;
 
+import com.accenture.huaweigroup.business.ResManager;
 import com.accenture.huaweigroup.module.entity.User;
 import com.accenture.huaweigroup.module.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -9,10 +10,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -23,16 +21,13 @@ public class UserService {
     private UserMapper userMapper;
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
-    //用户在线列表
-    private ConcurrentHashMap<Integer, Boolean> userOnlineList = new ConcurrentHashMap<>();
-
     //登录验证，检查用户是否存在
     //存在返回 true 并将用户id加入在线列表否则返回 false
     public boolean loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         if (user != null) {
             if (user.getPwd().equals(userPwd)) {
-                userOnlineList.put(user.getId(), true);
+                ResManager.addUserToList(user.getId(), true);
                 return true;
             }
         }
@@ -62,7 +57,7 @@ public class UserService {
      * @return 正常注销返回 true 否则返回 false
      */
     public boolean logout(int userId) throws Exception {
-        Boolean state = userOnlineList.remove(userId);
+        Boolean state = ResManager.removeUserFromList(userId);
         if (state != null) {
             return true;
         } else {
@@ -83,48 +78,28 @@ public class UserService {
      * @return 返回检查状态 在线返回 true 否则返回 false
      */
     public boolean onlineCheck(int userId) throws Exception {
-        LOG.info("当前用户在线列表：" + userOnlineList);
-        Boolean state = userOnlineList.get(userId);
+        LOG.info("当前用户在线列表：" + ResManager.getOnlineUserList());
+        Boolean state = ResManager.getUserState(userId);
         if (state == null) {
             return false;
         } else if (state) {
             return true;
         } else {
-            userOnlineList.replace(userId, true);
+            ResManager.changeUserState(userId, true);
             return true;
         }
     }
 
     public HashMap<Integer, String> getOnlineUserList() {
         HashMap<Integer, String> list = new HashMap<>();
-        Iterator<Map.Entry<Integer, Boolean>> iterator = userOnlineList.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, Boolean> entry = iterator.next();
-            if (entry.getValue()) {
-                list.put(entry.getKey(), userMapper.getUserById(entry.getKey()).getName());
-            }
+        List<Integer> onlineUser = ResManager.getOnlineUserList();
+        for (int id : onlineUser) {
+            User user = userMapper.getUserById(id);
+            list.put(id, user.getName());
         }
         return list;
     }
 
-    /**
-     * Spring Task 计时任务，由Spring boot自动执行
-     * 每隔5分钟轮询检查在线列表
-     * 将所有在线状态（true）的用户调整为即将离线状态（false）
-     * 将所有即将离线状态的用户从列表清除
-     */
-    @Scheduled(initialDelay = 5*60*1000, fixedDelay = 5*60*1000)
-    private void checkOnlineTimeTask() {
-        LOG.info("当前用户在线列表：" + userOnlineList);
-        Iterator<Map.Entry<Integer, Boolean>> iterator = userOnlineList.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, Boolean> entry = iterator.next();
-            if (entry.getValue()) {
-                userOnlineList.replace(entry.getKey(), false);
-            } else {
-                iterator.remove();
-            }
-        }
-    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.accenture.huaweigroup.service;
 
+import com.accenture.huaweigroup.business.ResManager;
 import com.accenture.huaweigroup.module.entity.*;
 import com.accenture.huaweigroup.module.bean.*;
 import com.accenture.huaweigroup.module.mapper.GameRecordMapper;
@@ -38,8 +39,8 @@ public class GameService {
         LOG.info("当前玩家列表：");
         LOG.info(waitPlayerList.toString());
         //如果玩家已经在列表则检查是否已经完成匹配准备
-        if (waitPlayerList.containsKey(playerId)) {
-            if (waitPlayerList.get(playerId)) {
+        if (ResManager.isMatching(playerId)) {
+            if (ResManager.getMatchState(playerId)) {
                 LOG.info("玩家 " + playerId + " 已在列表中，且已经准备开始游戏");
                 return true;
             } else {
@@ -49,24 +50,29 @@ public class GameService {
         }
         //如果玩家不在列表，检查列表是否为空，为空添加到列表中
         //列表不为空则寻找尚未完成匹配准备的玩家并创建游戏等待玩家准备
-        if (waitPlayerList.size() == 0) {
+        if (ResManager.getWaitListSize() == 0) {
             LOG.info("匹配列表中无玩家，将玩家 " + playerId + " 加入列表");
-            waitPlayerList.put(playerId, false);
+            ResManager.waitMatch(playerId);
             return false;
         } else {
             LOG.info("当前列表已有玩家，寻找对手");
-            waitPlayerList.put(playerId, false);
-            Iterator<Map.Entry<Integer, Boolean>> iterator = waitPlayerList.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Integer, Boolean> entry = iterator.next();
-                if (entry.getKey() != playerId && !entry.getValue()) {
-                    LOG.info("找到对手！ID为 " + entry.getKey() + " 准备创建游戏！");
-                    createGame(playerId, entry.getKey());
-                    waitPlayerList.replace(entry.getKey(), true);
-                    waitPlayerList.replace(playerId, true);
-                    break;
-                }
+            ResManager.waitMatch(playerId);//2019年9月5日14:13:31
+            int opponentId = ResManager.findOpponent(playerId);
+            if (opponentId != 0) {
+                createGame(playerId, opponentId);
+                return true;
             }
+//            Iterator<Map.Entry<Integer, Boolean>> iterator = waitPlayerList.entrySet().iterator();
+//            while (iterator.hasNext()) {
+//                Map.Entry<Integer, Boolean> entry = iterator.next();
+//                if (entry.getKey() != playerId && !entry.getValue()) {
+//                    LOG.info("找到对手！ID为 " + entry.getKey() + " 准备创建游戏！");
+//                    createGame(playerId, entry.getKey());
+//                    waitPlayerList.replace(entry.getKey(), true);
+//                    waitPlayerList.replace(playerId, true);
+//                    break;
+//                }
+//            }
         }
         return false;
     }
@@ -189,7 +195,21 @@ public class GameService {
     //获取并更新玩家数据
     public BattleData battleDataApi(BattleData data) {
         Game game = gameList.get(data.getGameId());
+        game.refreshData(data);
         return new BattleData(game);
+    }
+
+    public String checkGameState(BattleData data) {
+        return null;
+    }
+
+    public String checkBattleState(BattleData data) {
+        if (data.getState() == 0) {
+            Game game = gameList.get(data.getGameId());
+            game.setRounds(game.getRounds() + 1);
+
+        }
+        return null;
     }
 
     //计时轮训gamelist清除异常游戏并做异常处理

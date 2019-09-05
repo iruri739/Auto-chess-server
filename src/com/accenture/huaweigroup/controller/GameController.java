@@ -106,8 +106,8 @@ public class GameController {
     }
 
 
-    @GetMapping("/checkGameResult")
-    public boolean checkGameResult(@RequestParam("playerId") int playerId) {
+    @GetMapping("/checkGameBattle")
+    public boolean checkGameBattle(@RequestParam("playerId") int playerId) {
         return false;
     }
 

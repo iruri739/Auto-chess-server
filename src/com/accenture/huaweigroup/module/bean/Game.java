@@ -106,6 +106,12 @@ public class Game {
         return false;
     }
 
+    public void resetTime() {
+        this.prepareTime = PLAYER_DEFAULT_PREPARETIME;
+        this.playerOne.setState(PlayerState.PREPARE);
+        this.playerTwo.setState(PlayerState.PREPARE);
+    }
+
     public Player getPlayer(int playerId) {
         if (playerOne.getId() == playerId) {
             return playerOne;
