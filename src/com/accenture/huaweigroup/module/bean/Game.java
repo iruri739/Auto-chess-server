@@ -4,6 +4,7 @@ import com.accenture.huaweigroup.module.entity.Chess;
 import com.accenture.huaweigroup.module.bean.GameState;
 import com.accenture.huaweigroup.service.ChessService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,45 +30,6 @@ public class Game {
     private Player playerOne = new Player();
     private Player playerTwo = new Player();
 
-    private Runnable checkTimeState = new Runnable() {
-        @Override
-        public void run() {
-            if (checkPlayerState(PlayerState.PREPARE)) {
-                startPrepare = true;
-            }
-            if (checkPlayerState(PlayerState.BATTLE)) {
-                startBattle = true;
-            }
-        }
-    };
-    private Runnable prepareRun = new Runnable() {
-        @Override
-        public void run() {
-            if (startPrepare) {
-                prepareTime--;
-                System.out.println("剩余准备时间：" + prepareTime);
-                if (prepareTime == 0) {
-                    startPrepare = false;
-                    prepareTime = PLAYER_DEFAULT_PREPARETIME;
-                }
-            }
-        }
-    };
-
-    private Runnable battleRun = new Runnable() {
-        @Override
-        public void run() {
-            if (startBattle) {
-                battleTime--;
-                System.out.println("剩余战斗时间：" + battleTime);
-                if (battleTime == 0) {
-                    startBattle = false;
-                    battleTime = BATTLE_DEFAULT_TIME;
-                }
-            }
-        }
-    };
-
     public Game() {
         super();
     }
@@ -77,10 +39,18 @@ public class Game {
         this.id = id;
         this.playerOne.setId(playerOneId);
         this.playerTwo.setId(playerTwoId);
-        scheduleService.scheduleAtFixedRate(checkTimeState, 2, 1, TimeUnit.SECONDS);
-        scheduleService.scheduleAtFixedRate(prepareRun, 2, 1, TimeUnit.SECONDS);
-        scheduleService.scheduleAtFixedRate(battleRun, 2, 1, TimeUnit.SECONDS);
+    }
 
+    @Scheduled(initialDelay = 0, fixedRate = 1000)
+    private void readyToPrepare() {
+        if (state == GameState.PREPARE) {
+            state = GameState.GAMING;
+        }
+    }
+
+    @Scheduled(initialDelay = 0, fixedRate = 1000)
+    private void prePareToBattle() {
+        
     }
 
     public boolean refreshData(BattleData data) {

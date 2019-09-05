@@ -44,8 +44,8 @@ public class GameController {
         return gameService.getInitGameData(playerId);
     }
 
-    @ApiOperation(value = "玩家战场准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
-    @GetMapping("/gameStartCheck")
+    @ApiOperation(value = "进入准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
+    @GetMapping("/gamePrepareCheck")
     public boolean gameStartCheck(String gameId, int playerId) {
         return gameService.gamePrepareCheck(gameId, playerId);
     }
@@ -58,7 +58,7 @@ public class GameController {
         return gameService.changePlayerInventory(gameId, playerId);
     }
 
-    @ApiOperation(value = "检查是否可以进入战斗")
+    @ApiOperation(value = "进入战斗阶段检测", notes = "检测玩家是否可以进入战斗阶段", httpMethod = "GET")
     @GetMapping("/gameBattleCheck")
     public boolean gameBattleCheck(String gameId, int playerId) {
         return gameService.gamePrepareCheck(gameId, playerId);

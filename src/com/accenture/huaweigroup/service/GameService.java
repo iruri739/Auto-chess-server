@@ -94,6 +94,23 @@ public class GameService {
             return false;
         } else {
             if (game.checkPlayerState(PlayerState.PREPARE)) {
+                game.setState(GameState.PREPARE);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean gameBattleCheck(String gameId, int playerId) {
+        Game game = ResManager.findGameById(gameId);
+        Player player = game.getPlayer(playerId);
+        if (player.getState() != PlayerState.BATTLE) {
+            player.setState(PlayerState.BATTLE);
+            return false;
+        } else {
+            if (game.checkPlayerState(PlayerState.BATTLE)) {
+                game.setState(GameState.PREPARE);
                 return true;
             }
         }
@@ -130,7 +147,6 @@ public class GameService {
 
     //获取并更新玩家数据
     public BattleData battleDataApi(BattleData data) {
-
         Game game = ResManager.findGameById(data.getGameId());
         game.refreshData(data);
         return new BattleData(game);
@@ -140,14 +156,7 @@ public class GameService {
         return null;
     }
 
-    public String checkBattleState(BattleData data) {
-        if (data.getState() == 0) {
-            Game game = ResManager.findGameById(data.getGameId());
-            game.setRounds(game.getRounds() + 1);
 
-        }
-        return null;
-    }
 
     //计时轮训gamelist清除异常游戏并做异常处理
 //    @Scheduled(initialDelay = 1000, fixedRate = 60*1000)
