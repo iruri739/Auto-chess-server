@@ -108,12 +108,12 @@ public class ResManager {
 
 
     //游戏列表
-    private static ConcurrentHashMap<Integer, Game> gameList = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, Game> gameList = new ConcurrentHashMap<>();
 
     public static Game findGameByPlayer(int playerId) {
-        Iterator<Map.Entry<Integer, Game>> iterator = gameList.entrySet().iterator();
+        Iterator<Map.Entry<String, Game>> iterator = gameList.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<Integer, Game> entry = iterator.next();
+            Map.Entry<String, Game> entry = iterator.next();
             if (entry.getValue().getPlayer(playerId) != null) {
                 return entry.getValue();
             }
@@ -121,7 +121,7 @@ public class ResManager {
         return null;
     }
 
-    public static Game findGameById(int gameId) {
+    public static Game findGameById(String gameId) {
         return gameList.get(gameId);
     }
 

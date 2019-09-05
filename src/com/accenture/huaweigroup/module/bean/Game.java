@@ -18,7 +18,7 @@ public class Game {
     private static final int BATTLE_DEFAULT_TIME = 60;
     private static final ScheduledExecutorService scheduleService = Executors.newSingleThreadScheduledExecutor();
 
-    private int id;
+    private String id;
     private int totalTime = 0;
     private int rounds = 1;
     private int prepareTime = PLAYER_DEFAULT_PREPARETIME;
@@ -72,7 +72,7 @@ public class Game {
         super();
     }
 
-    public Game(int id, int playerOneId, int playerTwoId) {
+    public Game(String id, int playerOneId, int playerTwoId) {
         super();
         this.id = id;
         this.playerOne.setId(playerOneId);
@@ -84,7 +84,7 @@ public class Game {
     }
 
     public boolean refreshData(BattleData data) {
-        if (this.id == data.getGameId()) {
+        if (this.id.equals(data.getGameId())) {
             this.playerOne = data.getPlayerOneData();
             this.playerTwo = data.getPlayerTwoData();
             return true;
@@ -217,11 +217,11 @@ public class Game {
         this.state = state;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -19,7 +19,7 @@ public class GameService {
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
 
     @Autowired
-    private static GameRecordMapper gameRecordMapper;
+    private GameRecordMapper gameRecordMapper;
 
     @Autowired
     private ChessService chessService;
@@ -38,6 +38,9 @@ public class GameService {
      */
     public boolean matchGame(int playerId) throws Exception {
         ResManager.showMatchList();
+        if (ResManager.findGameByPlayer(playerId) != null) {
+            return true;
+        }
         //如果玩家已经在列表则继续等待
         if (ResManager.isMatching(playerId)) {
             LOG.info("玩家 " + playerId + " 已在匹配列表中，继续等待");
@@ -62,59 +65,14 @@ public class GameService {
         return false;
     }
 
-//    /**
-//     *  检查双方玩家是否已经做好匹配准备
-//     * @param playerId 玩家ID
-//     * @return
-//     */
-//    public boolean matchReadyCheck(int playerId) {
-//        Game game = ResManager.findGameByPlayer(playerId);
-//        if (game == null) {
-//            return false;
-//        }
-//        if (game.getPlayer(playerId).getState() == PlayerState.NONE) {
-//            game.getPlayer(playerId).setState(PlayerState.REDAY);
-//            return false;
-//        } else {
-//            if (game.checkPlayerState(PlayerState.REDAY)) {
-//                ResManager.matchFinish(playerId);
-//                game.getPlayerOne().setState(PlayerState.PREPARE);
-//                game.getPlayerTwo().setState(PlayerState.PREPARE);
-//                GameRecord gameRecord = gameRecordMapper.findById(game.getId());
-//                gameRecord.setGameId(game.getId());
-//                gameRecordMapper.update(gameRecord);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    /**
-////     * 取消匹配流程
-////     *
-////     * @param playerId
-////     * @return
-////     * @throws Exception
-////     */
-////    public boolean cancelMatch(int playerId) throws Exception {
-////        if (ResManager.isMatching(playerId)) {
-////            ResManager.cancelMatch(playerId);
-////            return true;
-////        }
-////        return false;
-////    }
-
     /**
      * 创建游戏
      * @param playerOneId 玩家1的ID
      * @param playerTwoId 玩家2的ID
      */
     public void createGame(int playerOneId, int playerTwoId) {
-        gameRecordMapper.insert(new GameRecord(playerOneId, playerTwoId));
-        GameRecord gameRecord = gameRecordMapper.getInitRecord(playerOneId, playerTwoId);
-        gameRecord.setGameId(gameRecord.getRecordId());
-        gameRecordMapper.update(gameRecord);
-        Game newGame = new Game(gameRecord.getRecordId(), playerOneId, playerTwoId);
+        String uuid = UUID.randomUUID().toString().substring(24);
+        Game newGame = new Game(uuid, playerOneId, playerTwoId);
         newGame.getPlayerOne().setCardInventory(chessService.getRandomCards());
         newGame.getPlayerOne().setName(userService.getUserById(playerOneId).getName());
         newGame.getPlayerTwo().setCardInventory(chessService.getRandomCards());
@@ -128,7 +86,7 @@ public class GameService {
      * @param playerId 玩家ID
      * @return
      */
-    public boolean gamePrepareCheck(int gameId, int playerId) {
+    public boolean gamePrepareCheck(String gameId, int playerId) {
         Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
         if (player.getState() != PlayerState.PREPARE) {
@@ -148,7 +106,7 @@ public class GameService {
      * @param playerId
      * @return
      */
-    public ArrayList<Chess> changePlayerInventory(int gameId, int playerId) {
+    public ArrayList<Chess> changePlayerInventory(String gameId, int playerId) {
         Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
         if (player.getGold() >= 2) {
@@ -196,6 +154,50 @@ public class GameService {
 //    private void cycleCheckGame() {
 //
 //    }
+
+
+//    /**
+//     *  检查双方玩家是否已经做好匹配准备
+//     * @param playerId 玩家ID
+//     * @return
+//     */
+//    public boolean matchReadyCheck(int playerId) {
+//        Game game = ResManager.findGameByPlayer(playerId);
+//        if (game == null) {
+//            return false;
+//        }
+//        if (game.getPlayer(playerId).getState() == PlayerState.NONE) {
+//            game.getPlayer(playerId).setState(PlayerState.REDAY);
+//            return false;
+//        } else {
+//            if (game.checkPlayerState(PlayerState.REDAY)) {
+//                ResManager.matchFinish(playerId);
+//                game.getPlayerOne().setState(PlayerState.PREPARE);
+//                game.getPlayerTwo().setState(PlayerState.PREPARE);
+//                GameRecord gameRecord = gameRecordMapper.findById(game.getId());
+//                gameRecord.setGameId(game.getId());
+//                gameRecordMapper.update(gameRecord);
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
+//    /**
+////     * 取消匹配流程
+////     *
+////     * @param playerId
+////     * @return
+////     * @throws Exception
+////     */
+////    public boolean cancelMatch(int playerId) throws Exception {
+////        if (ResManager.isMatching(playerId)) {
+////            ResManager.cancelMatch(playerId);
+////            return true;
+////        }
+////        return false;
+////    }
+
 
 
 }

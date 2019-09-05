@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BattleData {
     private int state;
-    private int gameId;
+    private String gameId;
     private int prepareTime;
     private int battleTime;
     private int rounds;
@@ -48,11 +48,11 @@ public class BattleData {
         this.state = state;
     }
 
-    public int getGameId() {
+    public String getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(String gameId) {
         this.gameId = gameId;
     }
 

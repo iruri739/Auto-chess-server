@@ -25,8 +25,6 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
-    @Autowired
-    private ChessService chessService;
 
     @ApiOperation(value = "玩家匹配", notes = "调用该接口", httpMethod = "GET")
     @GetMapping("/matchGame")
@@ -39,6 +37,47 @@ public class GameController {
         }
         return false;
     }
+
+    @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "POST")
+    @PostMapping("/defaultDataModel")
+    public BattleData sendDefaultDataModel(int playerId) {
+        return gameService.getInitGameData(playerId);
+    }
+
+    @ApiOperation(value = "玩家战场准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
+    @GetMapping("/gameStartCheck")
+    public boolean gameStartCheck(String gameId, int playerId) {
+        return gameService.gamePrepareCheck(gameId, playerId);
+    }
+
+    @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "扣除玩家2金币刷新待选区卡牌，无法刷新则返回null", httpMethod = "GET")
+    @GetMapping(value = "/getChessData")
+    public ArrayList<Chess> getChessData(@RequestParam("gameId") String gameId,
+                                         @RequestParam("playerId") int playerId)
+    {
+        return gameService.changePlayerInventory(gameId, playerId);
+    }
+
+    @ApiOperation(value = "检查是否可以进入战斗")
+    @GetMapping("/gameBattleCheck")
+    public boolean gameBattleCheck(String gameId, int playerId) {
+        return gameService.gamePrepareCheck(gameId, playerId);
+    }
+
+
+
+    @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")
+    @PostMapping("/battleDataApi")
+    public BattleData sendBattleData(@RequestBody BattleData data) {
+        return gameService.battleDataApi(data);
+    }
+
+
+//    @GetMapping("/checkGameBattle")
+//    public boolean checkGameBattle(@RequestParam("playerId") int playerId) {
+//        return false;
+//    }
+
 
 //    @ApiOperation(value = "验证玩家匹配", notes = "验证匹配的玩家是否都已经准备开始游戏", httpMethod = "GET")
 //    @GetMapping("/checkMatch")
@@ -72,45 +111,6 @@ public class GameController {
 //    @GetMapping("/getInitData")
 //    public BattleData getGameInitData(@RequestParam("playerId") int playerId) {
 //        return gameService.getInitGameData(playerId);
-//    }
-    @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "POST")
-    @PostMapping("/defaultDataModel")
-    public BattleData sendDefaultDataModel(int playerId) {
-        return gameService.getInitGameData(playerId);
-    }
-
-    @ApiOperation(value = "玩家战场准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
-    @GetMapping("/gameStartCheck")
-    public boolean gameStartCheck(int gameId, int playerId) {
-        return gameService.gamePrepareCheck(gameId, playerId);
-    }
-
-    @ApiOperation(value = "获取刷新待选区卡牌列表", notes = "扣除玩家2金币刷新待选区卡牌，无法刷新则返回null", httpMethod = "GET")
-    @GetMapping(value = "/getChessData")
-    public ArrayList<Chess> getChessData(@RequestParam("gameId") int gameId,
-                                         @RequestParam("playerId") int playerId)
-    {
-        return gameService.changePlayerInventory(gameId, playerId);
-    }
-
-    @ApiOperation(value = "检查是否可以进入战斗")
-    @GetMapping("/gameBattleCheck")
-    public boolean gameBattleCheck(int gameId, int playerId) {
-        return gameService.gamePrepareCheck(gameId, playerId);
-    }
-
-
-
-    @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")
-    @PostMapping("/battleDataApi")
-    public BattleData sendBattleData(@RequestBody BattleData data) {
-        return gameService.battleDataApi(data);
-    }
-
-
-//    @GetMapping("/checkGameBattle")
-//    public boolean checkGameBattle(@RequestParam("playerId") int playerId) {
-//        return false;
 //    }
 
 	
