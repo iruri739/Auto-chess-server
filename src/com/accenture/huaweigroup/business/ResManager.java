@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Component
 public class ResManager {
@@ -68,54 +69,39 @@ public class ResManager {
     }
 
     //玩家匹配列表
-    private static ConcurrentHashMap<Integer, Boolean> waitPlayerList = new ConcurrentHashMap<>();
+    private static ConcurrentSkipListSet<Integer> matchList = new ConcurrentSkipListSet<>();
 
-    public static boolean isMatching(int playerId) {
-        return waitPlayerList.containsKey(playerId);
-    }
-
-    public static boolean getMatchState(int playerId) {
-        return waitPlayerList.get(playerId);
-    }
 
     public static void showMatchList() {
-        LOG.info("当前玩家列表：");
-        LOG.info(waitPlayerList.toString());
+        LOG.info("当前玩家匹配列表：");
+        LOG.info(matchList.toString());
+    }
+
+    public static boolean isMatching(int playerId) {
+        if (matchList.contains(playerId)){
+            return true;
+        }
+        return false;
     }
 
     public static void joinMatch(int playerId) {
-        waitPlayerList.put(playerId, false);
+        matchList.add(playerId);
     }
 
-    public static void matchFinish(int playerId) {
-        waitPlayerList.remove(playerId);
-    }
-
-    public static void cancelMatch(int playerId) {
-        matchFinish(playerId);
-    }
-
-    public static void changeMatchState(int playerId, boolean state) {
-        waitPlayerList.replace(playerId, state);
-    }
-
-    public static int findOpponent(int playerId) {
-        Iterator<Map.Entry<Integer, Boolean>> iterator = waitPlayerList.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, Boolean> entry = iterator.next();
-            if (entry.getKey() != playerId && !entry.getValue()) {
-                LOG.info("找到对手！ID为 " + entry.getKey() + " 准备创建游戏！");
-                waitPlayerList.replace(entry.getKey(), true);
-                waitPlayerList.replace(playerId, true);
-                return entry.getKey();
+    public static int findMatch(int playerId) {
+        for (int id : matchList) {
+            if (id != playerId) {
+                return id;
             }
         }
         return 0;
     }
 
-    public static int getWaitListSize() {
-        return waitPlayerList.size();
+    public static int matchListSize() {
+        return matchList.size();
     }
+
+
 
     //游戏列表
     private static ConcurrentHashMap<Integer, Game> gameList = new ConcurrentHashMap<>();

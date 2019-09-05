@@ -38,26 +38,20 @@ public class GameService {
      */
     public boolean matchGame(int playerId) throws Exception {
         ResManager.showMatchList();
-        //如果玩家已经在列表则检查是否已经完成匹配准备
+        //如果玩家已经在列表则继续等待
         if (ResManager.isMatching(playerId)) {
-            if (ResManager.getMatchState(playerId)) {
-                LOG.info("玩家 " + playerId + " 已在列表中，且已经准备开始游戏");
-                return true;
-            } else {
-                LOG.info("玩家 " + playerId + " 已在列表中，但仍未准备");
-                return false;
-            }
+            LOG.info("玩家 " + playerId + " 已在匹配列表中，继续等待");
+            return false;
         }
         //如果玩家不在列表，检查列表是否为空，为空添加到列表中
         //列表不为空则寻找尚未完成匹配准备的玩家并创建游戏等待玩家准备
-        if (ResManager.getWaitListSize() == 0) {
+        if (ResManager.matchListSize() == 0) {
             LOG.info("匹配列表中无玩家，将玩家 " + playerId + " 加入列表");
             ResManager.joinMatch(playerId);
             return false;
         } else {
             LOG.info("当前列表已有玩家，寻找对手");
-            ResManager.joinMatch(playerId);//2019年9月5日14:13:31
-            int opponentId = ResManager.findOpponent(playerId);
+            int opponentId = ResManager.findMatch(playerId);
             if (opponentId != 0) {
                 createGame(playerId, opponentId);
                 return true;
@@ -66,47 +60,47 @@ public class GameService {
         return false;
     }
 
-    /**
-     *  检查双方玩家是否已经做好匹配准备
-     * @param playerId 玩家ID
-     * @return
-     */
-    public boolean matchReadyCheck(int playerId) {
-        Game game = ResManager.findGameByPlayer(playerId);
-        if (game == null) {
-            return false;
-        }
-        if (game.getPlayer(playerId).getState() == PlayerState.NONE) {
-            game.getPlayer(playerId).setState(PlayerState.REDAY);
-            return false;
-        } else {
-            if (game.checkPlayerState(PlayerState.REDAY)) {
-                ResManager.matchFinish(playerId);
-                game.getPlayerOne().setState(PlayerState.PREPARE);
-                game.getPlayerTwo().setState(PlayerState.PREPARE);
-                GameRecord gameRecord = gameRecordMapper.findById(game.getId());
-                gameRecord.setGameId(game.getId());
-                gameRecordMapper.update(gameRecord);
-                return true;
-            }
-        }
-        return false;
-    }
+//    /**
+//     *  检查双方玩家是否已经做好匹配准备
+//     * @param playerId 玩家ID
+//     * @return
+//     */
+//    public boolean matchReadyCheck(int playerId) {
+//        Game game = ResManager.findGameByPlayer(playerId);
+//        if (game == null) {
+//            return false;
+//        }
+//        if (game.getPlayer(playerId).getState() == PlayerState.NONE) {
+//            game.getPlayer(playerId).setState(PlayerState.REDAY);
+//            return false;
+//        } else {
+//            if (game.checkPlayerState(PlayerState.REDAY)) {
+//                ResManager.matchFinish(playerId);
+//                game.getPlayerOne().setState(PlayerState.PREPARE);
+//                game.getPlayerTwo().setState(PlayerState.PREPARE);
+//                GameRecord gameRecord = gameRecordMapper.findById(game.getId());
+//                gameRecord.setGameId(game.getId());
+//                gameRecordMapper.update(gameRecord);
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-    /**
-     * 取消匹配流程
-     *
-     * @param playerId
-     * @return
-     * @throws Exception
-     */
-    public boolean cancelMatch(int playerId) throws Exception {
-        if (ResManager.isMatching(playerId)) {
-            ResManager.cancelMatch(playerId);
-            return true;
-        }
-        return false;
-    }
+//    /**
+////     * 取消匹配流程
+////     *
+////     * @param playerId
+////     * @return
+////     * @throws Exception
+////     */
+////    public boolean cancelMatch(int playerId) throws Exception {
+////        if (ResManager.isMatching(playerId)) {
+////            ResManager.cancelMatch(playerId);
+////            return true;
+////        }
+////        return false;
+////    }
 
     /**
      * 创建游戏
@@ -170,6 +164,7 @@ public class GameService {
         BattleData data = new BattleData(game);
         return data;
     }
+
 
     //获取并更新玩家数据
     public BattleData battleDataApi(BattleData data) {

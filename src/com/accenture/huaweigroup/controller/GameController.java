@@ -40,33 +40,33 @@ public class GameController {
         return false;
     }
 
-    @ApiOperation(value = "验证玩家匹配", notes = "验证匹配的玩家是否都已经准备开始游戏", httpMethod = "GET")
-    @GetMapping("/checkMatch")
-    public boolean checkMatch(@RequestParam("playerId") int playerId) {
-        if (gameService.matchReadyCheck(playerId)) {
-//            Game game = gameService.findGameByPlayerId(playerId);
-            return true;
-        }
-        return false;
-    }
+//    @ApiOperation(value = "验证玩家匹配", notes = "验证匹配的玩家是否都已经准备开始游戏", httpMethod = "GET")
+//    @GetMapping("/checkMatch")
+//    public boolean checkMatch(@RequestParam("playerId") int playerId) {
+//        if (gameService.matchReadyCheck(playerId)) {
+////            Game game = gameService.findGameByPlayerId(playerId);
+//            return true;
+//        }
+//        return false;
+//    }
 
-    @ApiOperation(value = "取消首次匹配", notes = "取消玩家匹配过程接口", httpMethod = "GET")
-    @GetMapping("/cancelMatch")
-    public boolean cancelMatch(@RequestParam("playerId") int playerId) {
-        try {
-            if (gameService.cancelMatch(playerId)) {
-                LOG.error("玩家[" + playerId +"] 取消匹配过程成功！");
-                return true;
-            } else {
-                LOG.error("玩家[" + playerId +"] 取消匹配过程失败！该玩家未开始匹配或已经进入游戏！");
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("玩家[" + playerId +"] 取消匹配过程发生错误！！！");
-        }
-        return false;
-    }
+//    @ApiOperation(value = "取消首次匹配", notes = "取消玩家匹配过程接口", httpMethod = "GET")
+//    @GetMapping("/cancelMatch")
+//    public boolean cancelMatch(@RequestParam("playerId") int playerId) {
+//        try {
+//            if (gameService.cancelMatch(playerId)) {
+//                LOG.error("玩家[" + playerId +"] 取消匹配过程成功！");
+//                return true;
+//            } else {
+//                LOG.error("玩家[" + playerId +"] 取消匹配过程失败！该玩家未开始匹配或已经进入游戏！");
+//                return false;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            LOG.error("玩家[" + playerId +"] 取消匹配过程发生错误！！！");
+//        }
+//        return false;
+//    }
 
 //    @ApiOperation(value = "获取初始游戏数据", notes = "调用接口获取初始玩家游戏数据", httpMethod = "GET")
 //    @GetMapping("/getInitData")
