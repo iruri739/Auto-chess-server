@@ -23,9 +23,9 @@ public class Game {
     private int totalTime = 0;
     private int rounds = 1;
     private int prepareTime = PLAYER_DEFAULT_PREPARETIME;
-    private boolean startPrepare = false;
+//    private boolean startPrepare = false;
     private int battleTime = BATTLE_DEFAULT_TIME;
-    private boolean startBattle = false;
+//    private boolean startBattle = false;
     private GameState state = GameState.CREATED;
     private Player playerOne = new Player();
     private Player playerTwo = new Player();
@@ -52,21 +52,25 @@ public class Game {
 
     @Scheduled(initialDelay = 0, fixedRate = 1000)
     private void stateChange() {
-        if (state == GameState.PREPARE) {
-
+        if (checkPlayerState(PlayerState.PREPARE)) {
+            state = GameState.PREPARE;
         }
-        if (state == GameState.BATTLE) {
+        if (checkPlayerState(PlayerState.BATTLE)) {
             fight();
         }
     }
 
-    public boolean refreshData(BattleData data) {
-        if (this.id.equals(data.getGameId())) {
-            this.playerOne = data.getPlayerOneData();
-            this.playerTwo = data.getPlayerTwoData();
-            return true;
+    public void refreshData(BattleData data, int playerId) {
+        Player player = getPlayer(playerId);
+        if (data.getPlayerOneData().getId() == playerId) {
+            player.setCardInventory(data.getPlayerOneData().getCardInventory());
+            player.setBattleCards(data.getPlayerOneData().getBattleCards());
+            player.setHandCards(data.getPlayerOneData().getHandCards());
+        } else {
+            player.setCardInventory(data.getPlayerTwoData().getCardInventory());
+            player.setBattleCards(data.getPlayerTwoData().getBattleCards());
+            player.setHandCards(data.getPlayerTwoData().getHandCards());
         }
-        return false;
     }
 
     public boolean containPlayer(int playerId) {
@@ -205,15 +209,7 @@ public class Game {
     public void setPrepareTime(int prepareTime) {
         this.prepareTime = prepareTime;
     }
-
-    public boolean isStartPrepare() {
-        return startPrepare;
-    }
-
-    public void setStartPrepare(boolean startPrepare) {
-        this.startPrepare = startPrepare;
-    }
-
+    
     public int getBattleTime() {
         return battleTime;
     }
@@ -222,11 +218,4 @@ public class Game {
         this.battleTime = battleTime;
     }
 
-    public boolean isStartBattle() {
-        return startBattle;
-    }
-
-    public void setStartBattle(boolean startBattle) {
-        this.startBattle = startBattle;
-    }
 }

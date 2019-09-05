@@ -38,6 +38,12 @@ public class GameController {
         return false;
     }
 
+    @ApiOperation(value = "断线重连检测", notes = "", httpMethod = "GET")
+    @GetMapping("/checkGameState")
+    public boolean disconnectCheck(@RequestParam("userId") int userId) {
+        return gameService.checkGameState(userId);
+    }
+
     @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "GET")
     @GetMapping("/defaultDataModel")
     public BattleData sendDefaultDataModel(@RequestParam("playerId") int playerId) {

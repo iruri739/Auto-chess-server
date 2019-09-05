@@ -91,9 +91,9 @@ public class GameService {
         Player player = game.getPlayer(playerId);
         if (game.getState() == GameState.FINISHED) {
             if (game.getPlayerOne().getHp() > 0) {
-                return String.valueOf(game.getPlayerOne().getId());
+                return "win";
             } else {
-                return String.valueOf(game.getPlayerTwo().getId());
+                return "lose";
             }
         }
         if (player.getState() != PlayerState.PREPARE) {
@@ -160,13 +160,19 @@ public class GameService {
 
     //获取并更新玩家数据
     public BattleData battleDataApi(String gameId, int playerId, BattleData data) {
-//        Game game = ResManager.findGameById(data.getGameId());
-//        game.refreshData(data);
-        return new BattleData();
+        Game game = ResManager.findGameById(gameId);
+        game.refreshData(data, playerId);
+        return new BattleData(game);
     }
 
-    public String checkGameState(BattleData data) {
-        return null;
+    //掉线重连
+    public boolean checkGameState(int playerId) {
+        Game game = ResManager.findGameByPlayer(playerId);
+        if (game != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
