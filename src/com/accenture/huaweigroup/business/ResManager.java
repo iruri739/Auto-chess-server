@@ -1,6 +1,7 @@
 package com.accenture.huaweigroup.business;
 
 import com.accenture.huaweigroup.module.bean.Game;
+import com.accenture.huaweigroup.module.bean.GameState;
 import com.accenture.huaweigroup.module.mapper.GameRecordMapper;
 import com.accenture.huaweigroup.module.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class ResManager {
      * 将所有在线状态（true）的用户调整为即将离线状态（false）
      * 将所有即将离线状态的用户从列表清除
      */
-    @Scheduled(initialDelay = 5*60*1000, fixedDelay = 5*60*1000)
+    @Scheduled(initialDelay = 3*60*1000, fixedDelay = 3*60*1000)
     private static void checkOnlineTimeTask() {
         LOG.info("当前用户在线列表：" + userOnlineList);
         Iterator<Map.Entry<Integer, Boolean>> iterator = userOnlineList.entrySet().iterator();
@@ -109,6 +110,12 @@ public class ResManager {
 
     //游戏列表
     private static ConcurrentHashMap<String, Game> gameList = new ConcurrentHashMap<>();
+
+    //检查游戏列表是否存在异常游戏并清除异常游戏
+    @Scheduled(initialDelay = 1000, fixedDelay = 5*60*1000)
+    private void gameCircleCheck() {
+//        Iterator<>
+    }
 
     public static Game findGameByPlayer(int playerId) {
         Iterator<Map.Entry<String, Game>> iterator = gameList.entrySet().iterator();

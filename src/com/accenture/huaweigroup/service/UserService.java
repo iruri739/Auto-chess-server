@@ -3,6 +3,7 @@ package com.accenture.huaweigroup.service;
 import com.accenture.huaweigroup.business.ResManager;
 import com.accenture.huaweigroup.module.entity.User;
 import com.accenture.huaweigroup.module.mapper.UserMapper;
+import com.accenture.huaweigroup.util.MD5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UserService {
     public String loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         if (user != null) {
-            if (user.getPwd().equals(userPwd)) {
+            if (user.getPwd().equals(MD5.md5(userPwd))) {
                 ResManager.addUserToList(user.getId(), true);
                 return String.valueOf(user.getId());
             }
@@ -39,6 +40,7 @@ public class UserService {
     public String register(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         if (user == null) {
+            userPwd = MD5.md5(userPwd);
             user = new User(userName, userPwd, null, userName);
             userMapper.insert(user);
             user = userMapper.getUserByName(userName);
