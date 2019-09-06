@@ -8,7 +8,7 @@ import java.util.ArrayList;
 @Component
 public class Player {
     private static final int PLAYER_TOTAL_HP = 100;
-    private static final int PLAYER_INIT_GOLD = 5;
+    private static final int PLAYER_INIT_GOLD = 20;
 
     private int id;
     private String name;

@@ -53,11 +53,15 @@ public class Game {
 
     @Scheduled(initialDelay = 0, fixedRate = 1000)
     private void stateChange() {
+        //判断双方玩家是否进入准备阶段，进入则回合数增加，后期加入其它处理
         if (checkPlayerState(PlayerState.PREPARE)) {
-            state = GameState.PREPARE;
+            rounds++;
+            state = GameState.GAMING;
         }
+        //判断双方玩家是否进入战斗阶段，进入则服务器进行逻辑战斗，处理相关数据
         if (checkPlayerState(PlayerState.BATTLE)) {
             fight();
+            state = GameState.GAMING;
         }
     }
 
@@ -110,28 +114,165 @@ public class Game {
         }
     }
 
+    private void cardFight(Chess A, Chess B) {
+        while (A.isAlive() && B.isAlive()) {
+            int Acost = B.getAttack() - A.getHp();
+            int Bcost = A.getAttack() - B.getHp();
+            if (Acost < 0) {
+                A.setHp(Acost);
+            } else {
+                A.setHp(0);
+                A.setAlive(false);
+            }
+            if (Bcost < 0) {
+                B.setHp(Bcost);
+            } else {
+                B.setHp(0);
+                B.setAlive(false);
+            }
+        }
+    }
+
+    private int findOtherChess(ArrayList<Chess> cards, int pos) {
+        int finder = pos;
+        while (finder >= 0) {
+            finder--;
+            if (cards.get(finder).isAlive()) {
+                return finder;
+            }
+        }
+        finder = pos;
+        while (finder < cards.size()) {
+            finder++;
+            if (cards.get(finder).isAlive()) {
+                return finder;
+            }
+        }
+        return -1;
+    }
+
+    private int simpleFindChess(ArrayList<Chess> chess) {
+        for (Chess i : chess) {
+            if (i.isAlive()) {
+                return chess.indexOf(i);
+            }
+        }
+        return -1;
+    }
+
+    private void findChessAndFight(ArrayList<Chess> Acards, ArrayList<Chess> Bcards, int pos) {
+        Chess A = Acards.get(pos);
+        Chess B = Bcards.get(pos);
+        if (A.isAlive() && B.isAlive()) {
+            cardFight(A, B);
+        } else if (A.isAlive() && !B.isAlive()) {
+            int finder = findOtherChess(Bcards, pos);
+            if (finder != -1) {
+                cardFight(A, Bcards.get(finder));
+            }
+        } else if (!A.isAlive() && B.isAlive()) {
+            int finder = findOtherChess(Acards, pos);
+            if (finder != -1) {
+                cardFight(B, Acards.get(finder));
+            }
+        }
+    }
+
+    private boolean noCardsToBattle(int who) {
+        boolean flag = true;
+        if (who == 1) {
+            for (Chess c : playerOne.getBattleCards()) {
+                if (c.isAlive()) {
+                    flag = false;
+                    break;
+                }
+            }
+        } else if (who == 2) {
+            for (Chess c : playerTwo.getBattleCards()) {
+                if (c.isAlive()) {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+
+    private void battleResult() {
+        if (noCardsToBattle(1)) {
+            int count = 0;
+            for (Chess c : playerTwo.getBattleCards()) {
+                if (c.isAlive()) {
+                    count++;
+                }
+            }
+            playerOne.setHp(playerOne.getHp() - count * 2);
+            if (playerOne.getWinCount() != 0) {
+                playerOne.setWinCount(0);
+            }
+            playerTwo.setWinCount(playerTwo.getWinCount() + 1);
+        } else {
+            int count = 0;
+            for (Chess c : playerOne.getBattleCards()) {
+                if (c.isAlive()) {
+                    count++;
+                }
+            }
+            playerTwo.setHp(playerTwo.getHp() - count * 2);
+            if (playerTwo.getWinCount() != 0) {
+                playerTwo.setWinCount(0);
+            }
+            playerOne.setWinCount(playerOne.getWinCount() + 1);
+        }
+    }
+
+    private void battleFinishCheck() {
+        if (playerOne.getHp() <= 0 || playerTwo.getHp() <= 0) {
+            state = GameState.FINISHED;
+        }
+    }
+
+    private void refeashGold() {
+        if (playerOne.getGold() < 50) {
+            int extraGold = playerOne.getGold() / 10 * 2;
+            playerOne.setGold(playerOne.getGold() + extraGold);
+        } else {
+            playerOne.setGold(playerOne.getGold() + 10);
+        }
+    }
 
     //双方玩家战场上卡牌的战斗处理
     private void fight() {
         ArrayList<Chess> chessOne = playerOne.getBattleCards();
         ArrayList<Chess> chessTwo = playerTwo.getBattleCards();
         Random random = new Random();
-        if (chessOne.size() >= chessTwo.size()) {
-            for (int i = 0; i < chessOne.size(); ++i) {
-                if (i < chessTwo.size()) {
-                    int first = random.nextInt(2) + 1;
-                    if (first == 1) {
-
+        while (noCardsToBattle(1) && noCardsToBattle(2)) {
+            if (chessOne.size() >= chessTwo.size()) {
+                for (int i = 0; i < chessOne.size(); ++i) {
+                    if (i < chessTwo.size()) {
+                        findChessAndFight(chessOne, chessTwo, i);
                     } else {
-
+                        int finder = simpleFindChess(chessTwo);
+                        if (finder != -1) {
+                            cardFight(chessOne.get(i), chessTwo.get(finder));
+                        }
                     }
-                } else {
-
+                }
+            } else {
+                for (int i = 0; i < chessTwo.size(); ++i) {
+                    if (i < chessOne.size()) {
+                        findChessAndFight(chessOne, chessTwo, i);
+                    } else {
+                        int finder = simpleFindChess(chessOne);
+                        if (finder != -1) {
+                            cardFight(chessOne.get(i), chessOne.get(finder));
+                        }
+                    }
                 }
             }
-        } else {
-
         }
+        battleResult();
+        refeashGold();
     }
 
     //获取玩家手牌

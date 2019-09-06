@@ -26,7 +26,7 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    @ApiOperation(value = "玩家匹配", notes = "调用该接口", httpMethod = "GET")
+    @ApiOperation(value = "玩家匹配", notes = "玩家调用接口，返回true表明匹配成功，false表明仍在匹配", httpMethod = "GET")
     @GetMapping("/matchGame")
     public boolean matchGame(@RequestParam("playerId") int playerId) {
         try {
@@ -38,7 +38,7 @@ public class GameController {
         return false;
     }
 
-    @ApiOperation(value = "断线重连检测", notes = "", httpMethod = "GET")
+    @ApiOperation(value = "断线重连检测", notes = "检查用户是否已经在游戏中，如果是则返回true，否则返回false", httpMethod = "GET")
     @GetMapping("/checkGameState")
     public boolean disconnectCheck(@RequestParam("userId") int userId) {
         return gameService.checkGameState(userId);

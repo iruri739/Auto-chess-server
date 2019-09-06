@@ -90,7 +90,7 @@ public class GameService {
         Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
         if (game.getState() == GameState.FINISHED) {
-            if (game.getPlayerOne().getHp() > 0) {
+            if (player.getHp() > 0) {
                 return "win";
             } else {
                 return "lose";
