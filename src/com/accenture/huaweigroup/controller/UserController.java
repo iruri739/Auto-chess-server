@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
@@ -25,42 +26,43 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @ApiOperation(value = "获取在线用户列表", notes = "获取用户id-用户名键值对格式在线用户列表")
+    @ApiOperation(value = "获取在线用户列表", notes = "获取在线用户列表")
     @GetMapping("/getOnlineList")
-    public HashMap<Integer, String> getOnlineUserList() {
+    public ArrayList<String> getOnlineUserList() {
         return userService.getOnlineUserList();
     }
 
-    @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回false", httpMethod = "GET")
+    @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回0", httpMethod = "GET")
     @GetMapping("/login")
-    public String loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
-        String state = "false";
+    public int loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
+        int id = 0;
         try {
-            state = userService.loginCheck(userName, userPwd);
-            if (!state.equals("false")) {
+            id = userService.loginCheck(userName, userPwd);
+            if (id != 0) {
                 LOG.info("用户[" + userName + "] 登录成功！");
+                return id;
             }
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("用户[" + userName + "] 登录发生错误！！！");
         }
-        return state;
+        return 0;
     }
 
-    @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回ID，否则返回false，发生错误状态码400,500", httpMethod = "POST")
+    @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回ID，否则返回0，发生错误状态码400,500", httpMethod = "POST")
     @PostMapping(value = "/register")
-    public String registerUser(@RequestBody UserDTO info) {
+    public int registerUser(@RequestBody UserDTO info) {
         try {
-            String result = userService.register(info.userName, info.userPwd);
-            if (!result.equals("false")) {
+            int id = userService.register(info.userName, info.userPwd);
+            if (id != 0) {
                 LOG.info("用户[" + info.userName + "] 注册成功！");
-                return result;
+                return id;
             }
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("用户[" + info.userName + "] 注册过程发送错误！！！");
         }
-        return "false";
+        return 0;
     }
 
     @ApiOperation(value = "用户登录状态检测", notes = "检测用户在线状态，在线则返回true，离线则返回false", httpMethod = "GET")

@@ -24,29 +24,29 @@ public class UserService {
 
     //登录验证，检查用户是否存在
     //存在返回 ID 并将用户id加入在线列表否则返回 false
-    public String loginCheck(String userName, String userPwd) throws Exception {
+    public int loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         if (user != null) {
             if (user.getPwd().equals(MD5.md5(userPwd))) {
                 ResManager.addUserToList(user.getId(), true);
-                return String.valueOf(user.getId());
+                return user.getId();
             }
         }
-        return "false";
+        return 0;
     }
 
     //用户注册，首先检查注册用户名是否已经存在
     //如果存在则返回 false 否则注册用户并返回 true
-    public String register(String userName, String userPwd) throws Exception {
+    public int register(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         if (user == null) {
             userPwd = MD5.md5(userPwd);
             user = new User(userName, userPwd, null, userName);
             userMapper.insert(user);
             user = userMapper.getUserByName(userName);
-            return String.valueOf(user.getId());
+            return user.getId();
         }
-        return "false";
+        return 0;
     }
 
     /**
@@ -93,12 +93,12 @@ public class UserService {
         }
     }
 
-    public HashMap<Integer, String> getOnlineUserList() {
-        HashMap<Integer, String> list = new HashMap<>();
+    public ArrayList<String> getOnlineUserList() {
+        ArrayList<String> list = new ArrayList<>();
         List<Integer> onlineUser = ResManager.getOnlineUserList();
         for (int id : onlineUser) {
             User user = userMapper.getUserById(id);
-            list.put(id, user.getName());
+            list.add(user.getName());
         }
         return list;
     }
