@@ -2,8 +2,11 @@ package com.accenture.huaweigroup.controller;
 
 import com.accenture.huaweigroup.module.bean.UserDTO;
 import com.accenture.huaweigroup.module.entity.User;
+import com.accenture.huaweigroup.service.TokenService;
 import com.accenture.huaweigroup.service.UserService;
 
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -11,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.rmi.runtime.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
@@ -25,44 +28,54 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    TokenService tokenService;
 
-    @ApiOperation(value = "获取在线用户列表", notes = "获取在线用户列表")
+    @ApiOperation(value = "获取在线用户列表", notes = "获取用户id-用户名键值对格式在线用户列表")
     @GetMapping("/getOnlineList")
-    public ArrayList<String> getOnlineUserList() {
+    public HashMap<Integer, String> getOnlineUserList() {
         return userService.getOnlineUserList();
     }
 
-    @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回0", httpMethod = "GET")
+    @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回false", httpMethod = "GET")
     @GetMapping("/login")
-    public int loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
-        int id = 0;
+    public String loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
+        String state = "false";
+
         try {
-            id = userService.loginCheck(userName, userPwd);
-            if (id != 0) {
+            state = userService.loginCheck(userName, userPwd);
+
+            JSONObject obj = new JSONObject();
+            if (!state.equals("false")) {
+                System.out.println(userName+" "+userPwd);
+                System.out.println("111");
+                String token = tokenService.SetRedisData(userName,userPwd);
+//
+                obj.put("status","用户登录成功");
+                obj.put("token",token);
                 LOG.info("用户[" + userName + "] 登录成功！");
-                return id;
             }
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("用户[" + userName + "] 登录发生错误！！！");
         }
-        return 0;
+        return state;
     }
 
-    @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回ID，否则返回0，发生错误状态码400,500", httpMethod = "POST")
+    @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回ID，否则返回false，发生错误状态码400,500", httpMethod = "POST")
     @PostMapping(value = "/register")
-    public int registerUser(@RequestBody UserDTO info) {
+    public String registerUser(@RequestBody UserDTO info) {
         try {
-            int id = userService.register(info.userName, info.userPwd);
-            if (id != 0) {
+            String result = userService.register(info.userName, info.userPwd);
+            if (!result.equals("false")) {
                 LOG.info("用户[" + info.userName + "] 注册成功！");
-                return id;
+                return result;
             }
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("用户[" + info.userName + "] 注册过程发送错误！！！");
         }
-        return 0;
+        return "false";
     }
 
     @ApiOperation(value = "用户登录状态检测", notes = "检测用户在线状态，在线则返回true，离线则返回false", httpMethod = "GET")
