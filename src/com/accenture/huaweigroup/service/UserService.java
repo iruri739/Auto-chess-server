@@ -1,6 +1,8 @@
 package com.accenture.huaweigroup.service;
 
 import com.accenture.huaweigroup.business.ResManager;
+import com.accenture.huaweigroup.business.UserManager;
+import com.accenture.huaweigroup.module.bean.UserToken;
 import com.accenture.huaweigroup.module.entity.User;
 import com.accenture.huaweigroup.module.mapper.UserMapper;
 import com.accenture.huaweigroup.util.MD5;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,19 +23,31 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserManager userManager;
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
-    //登录验证，检查用户是否存在
-    //存在返回 ID 并将用户id加入在线列表否则返回 false
-    public int loginCheck(String userName, String userPwd) throws Exception {
+    /**
+     * 登录验证
+     *
+     * 成功返回状态为true并且附带用户的id和通信token的json对象
+     * 失败仅返回包含状态为false的json对象
+     *
+     * @param userName 用户名
+     * @param userPwd 用户密码
+     * @return 返回包含验证状态、用户id、用户token的json对象
+     * @throws Exception
+     */
+    public UserToken loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
+        String token;
         if (user != null) {
-            if (user.getPwd().equals(MD5.md5(userPwd))) {
-                ResManager.addUserToList(user.getId(), true);
-                return user.getId();
+            if (user.getPwd().equals(DigestUtils.md5DigestAsHex(userPwd.getBytes()))) {
+                token = userManager.addUserToList(user.getId());
+                return new UserToken(true ,user.getId(), token);
             }
         }
-        return 0;
+        return new UserToken(false, 0, null);
     }
 
     //用户注册，首先检查注册用户名是否已经存在
