@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -16,9 +17,13 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class Game{
-    private static final int PLAYER_DEFAULT_PREPARETIME = 30;
+    public static final int PLAYER_DEFAULT_PREPARETIME = 30;
     private static final int BATTLE_DEFAULT_TIME = 60;
 
+    //计算战斗结果的系统时间
+    private Date calEndDT;
+    //当前回合倒计时的时长
+    private int lastTime;
     private String id;
     private int totalTime = 0;
     private int rounds = 1;
@@ -329,5 +334,19 @@ public class Game{
     public void setBattleTime(int battleTime) {
         this.battleTime = battleTime;
     }
+
+    public Date getCalEndDT() {
+        return calEndDT;
+    }
+
+    public void setCalEndDT(Date calEndDT) {
+        this.calEndDT = calEndDT;
+    }
+
+    public int getLastTime() {
+        // PLAYER_DEFAULT_PREPARETIME -（当前系统时间-calEndDT）
+        return lastTime;
+    }
+
 
 }
