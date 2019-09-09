@@ -53,16 +53,16 @@ public class Game {
 
     @Scheduled(initialDelay = 0, fixedRate = 1000)
     private void stateChange() {
-        //判断双方玩家是否进入准备阶段，进入则回合数增加，后期加入其它处理
-//        if (checkPlayerState(PlayerState.PREPARE)) {
-//            rounds++;
-//            state = GameState.GAMING;
-//        }
-//        //判断双方玩家是否进入战斗阶段，进入则服务器进行逻辑战斗，处理相关数据
-//        if (checkPlayerState(PlayerState.BATTLE)) {
-//            fight();
-//            state = GameState.GAMING;
-//        }
+//        判断双方玩家是否进入准备阶段，进入则回合数增加，后期加入其它处理
+        if (checkPlayerState(PlayerState.PREPARE)) {
+            rounds++;
+            state = GameState.GAMING;
+        }
+        //判断双方玩家是否进入战斗阶段，进入则服务器进行逻辑战斗，处理相关数据
+        if (checkPlayerState(PlayerState.BATTLE)) {
+            fight();
+            state = GameState.GAMING;
+        }
     }
 
 
