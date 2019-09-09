@@ -1,8 +1,8 @@
 package com.accenture.huaweigroup.controller;
 
+import com.accenture.huaweigroup.module.bean.UpdateGameData;
 import com.accenture.huaweigroup.module.entity.*;
 import com.accenture.huaweigroup.module.bean.BattleData;
-import com.accenture.huaweigroup.service.ChessService;
 
 import com.accenture.huaweigroup.service.GameService;
 
@@ -72,10 +72,13 @@ public class GameController {
 
     @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")
     @PostMapping("/battleDataApi")
-    public BattleData sendBattleData(@RequestParam("gameId") String gameId,
-                                     @RequestParam("playerId") int playerId,
-                                     @RequestBody BattleData data) {
-        return gameService.battleDataApi(gameId , playerId, data);
+    public boolean sendBattleData(@RequestBody UpdateGameData data) {
+        try {
+            return gameService.battleDataApi(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

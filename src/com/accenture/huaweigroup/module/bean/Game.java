@@ -65,18 +65,13 @@ public class Game {
         }
     }
 
-    public void refreshData(BattleData data, int playerId) {
-        Player player = getPlayer(playerId);
-        if (data.getPlayerOneData().getId() == playerId) {
-            player.setCardInventory(data.getPlayerOneData().getCardInventory());
-            player.setBattleCards(data.getPlayerOneData().getBattleCards());
-            player.setHandCards(data.getPlayerOneData().getHandCards());
-        } else {
-            player.setCardInventory(data.getPlayerTwoData().getCardInventory());
-            player.setBattleCards(data.getPlayerTwoData().getBattleCards());
-            player.setHandCards(data.getPlayerTwoData().getHandCards());
-        }
-    }
+//    public void refreshData(int playerId, UpdateGameData data) {
+//        Player player = getPlayer(playerId);
+//        ArrayList<Chess> chessList = new ArrayList<>();
+//        for (int i : data.getBattleCards()) {
+//            chessList.add()
+//        }
+//    }
 
     public boolean containPlayer(int playerId) {
         if (playerOne.getId() == playerId || playerTwo.getId() == playerId) {
