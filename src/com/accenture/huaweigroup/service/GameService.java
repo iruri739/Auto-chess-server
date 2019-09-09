@@ -78,6 +78,7 @@ public class GameService {
         newGame.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         newGame.getPlayerTwo().setName(userService.getUserById(playerTwoId).getName());
         ResManager.addToGameList(newGame);
+//        GameThreadService.run(newGame.getId());
     }
 
     /**
@@ -133,6 +134,15 @@ public class GameService {
         return false;
     }
 
+    /**
+     * 添加玩家新购入的卡牌进入到手牌中
+     *
+     * @param gameId 游戏id
+     * @param playerId 玩家id
+     * @param newCards 新购入的卡牌集合
+     * @return
+     * @throws Exception
+     */
     public boolean buyNewCards(String gameId, int playerId, ArrayList<Chess> newCards) throws Exception {
         Game game = ResManager.findGameById(gameId);
         Player player = game.getPlayer(playerId);
@@ -143,7 +153,7 @@ public class GameService {
             player.setGold(player.getGold() - chess.getPrice());
         }
         player.getHandCards().addAll(newCards);
-        LOG.info("###### 玩家 "+ player.getName() +" 添加新卡牌");
+        LOG.info("###### 玩家 "+ player.getName() +" 添加新卡牌 ######");
         LOG.info(newCards.toString());
         return true;
     }
@@ -171,6 +181,7 @@ public class GameService {
             data.setCards(new ArrayList<>());
         }
         game.setPlayerBattleCards(data.getPlayerId(),(ArrayList<Chess>) data.getCards());
+//        game.calcLastTime();
         return true;
     }
 

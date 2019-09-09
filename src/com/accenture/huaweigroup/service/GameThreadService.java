@@ -7,10 +7,9 @@ import java.util.concurrent.Executors;
 
 public class GameThreadService {
 
-    public void run(String gameId){
-        ExecutorService exec = Executors.newCachedThreadPool();
-            exec.execute(new GameThread(gameId));
+    private static ExecutorService exec = Executors.newCachedThreadPool();
 
-
+    public static void run(String gameId){
+        exec.execute(new GameThread(gameId));
     }
 }

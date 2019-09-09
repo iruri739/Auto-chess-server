@@ -21,7 +21,7 @@ public class Game{
     private static final int BATTLE_DEFAULT_TIME = 60;
 
     //计算战斗结果的系统时间
-    private Date calEndDT;
+    private Date calEndDT = null;
     //当前回合倒计时的时长
     private int lastTime;
     private String id;
@@ -52,7 +52,6 @@ public class Game{
         return false;
     }
 
-
     public Player getPlayer(int playerId) {
         if (playerOne.getId() == playerId) {
             return playerOne;
@@ -61,6 +60,19 @@ public class Game{
         }
     }
 
+    public void calcLastTime() {
+        if (this.calEndDT != null) {
+            this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (this.calEndDT.getTime() - new Date().getTime()));
+        }
+    }
+
+    /**
+     * 卡牌战斗逻辑
+     * 战斗会一直持续到双方卡牌某一方死亡
+     *
+     * @param A
+     * @param B
+     */
     private void cardFight(Chess A, Chess B) {
         while (A.isAlive() && B.isAlive()) {
             int Acost = B.getAttack() - A.getHp();
@@ -80,6 +92,14 @@ public class Game{
         }
     }
 
+    /**
+     * 寻找所在位置左边和右边的存活卡牌
+     * 优先从左边开始寻找
+     *
+     * @param cards
+     * @param pos
+     * @return
+     */
     private int findOtherChess(ArrayList<Chess> cards, int pos) {
         int finder = pos;
         while (finder >= 0) {
@@ -98,6 +118,14 @@ public class Game{
         return -1;
     }
 
+    /**
+     * 简单寻找场上存活的卡牌
+     * 用于处理自身卡牌没有对位卡牌可供战斗时的情况
+     * 从对方存活卡牌中寻找一位仍然存活的卡牌并战斗
+     *
+     * @param chess
+     * @return
+     */
     private int simpleFindChess(ArrayList<Chess> chess) {
         for (Chess i : chess) {
             if (i.isAlive()) {
@@ -107,16 +135,27 @@ public class Game{
         return -1;
     }
 
+    /**
+     * 卡牌战斗核心逻辑
+     *
+     * @param Acards A的战场卡牌
+     * @param Bcards B的战场卡牌
+     * @param pos 卡牌位置
+     */
     private void findChessAndFight(ArrayList<Chess> Acards, ArrayList<Chess> Bcards, int pos) {
+        //获得所在位置的双方卡牌
         Chess A = Acards.get(pos);
         Chess B = Bcards.get(pos);
+        //如果双方卡牌都存活则发生战斗
         if (A.isAlive() && B.isAlive()) {
             cardFight(A, B);
+            //如果A存活但B不存活则寻找B的左边和右边是否还有存活卡牌，如果有则进入战斗
         } else if (A.isAlive() && !B.isAlive()) {
             int finder = findOtherChess(Bcards, pos);
             if (finder != -1) {
                 cardFight(A, Bcards.get(finder));
             }
+            //如果B存活但A不存活则寻找A的左边和右边是否还有存活卡牌，如果有则进入战斗
         } else if (!A.isAlive() && B.isAlive()) {
             int finder = findOtherChess(Acards, pos);
             if (finder != -1) {
@@ -125,6 +164,12 @@ public class Game{
         }
     }
 
+    /**
+     * 检测玩家是否场上还有存货的卡牌
+     *
+     * @param who 1 表示玩家1、2 表示玩家2
+     * @return 仍有存活卡牌返回true否则返回false
+     */
     private boolean noCardsToBattle(int who) {
         boolean flag = true;
         if (who == 1) {
@@ -145,8 +190,15 @@ public class Game{
         return flag;
     }
 
+    /**
+     * 战斗结算
+     */
     private void battleResult() {
         if (noCardsToBattle(1)) {
+            //玩家1场上已经没有存活卡牌
+            //则清点玩家2场上卡牌数量
+            //根据数量扣除玩家2  卡牌数量*2 的血量
+            //同时将玩家2连胜标识+1 将玩家1连胜标识清零
             int count = 0;
             for (Chess c : playerTwo.getBattleCards()) {
                 if (c.isAlive()) {
@@ -158,7 +210,8 @@ public class Game{
                 playerOne.setWinCount(0);
             }
             playerTwo.setWinCount(playerTwo.getWinCount() + 1);
-        } else {
+        } else if (noCardsToBattle(2)) {
+            //玩家2场上没有存活卡牌时处理逻辑与玩家1类似
             int count = 0;
             for (Chess c : playerOne.getBattleCards()) {
                 if (c.isAlive()) {
@@ -173,12 +226,26 @@ public class Game{
         }
     }
 
+    /**
+     * 整场游戏结束检测
+     * 任一玩家血量降至0以下则该局游戏结束
+     */
     private void battleFinishCheck() {
         if (playerOne.getHp() <= 0 || playerTwo.getHp() <= 0) {
             state = GameState.FINISHED;
         }
     }
 
+    /**
+     * 刷新金钱
+     * 每回合结束结算玩家金钱
+     * 玩家可以获得基于当前剩余金钱数计算得到的利息
+     *
+     * 当玩家拥有10金币，则获得1金币的利息
+     * 当玩家拥有20金币，则获得2金币的利息
+     * 以此类推直至50,50以上的金币则只给5金币
+     * 由于当前游戏卡牌设定购买价格过高，故玩家将会获得基于以上规则金币的两倍金币
+     */
     private void refeashGold() {
         if (playerOne.getGold() < 50) {
             int extraGold = playerOne.getGold() / 10 * 2;
@@ -188,17 +255,24 @@ public class Game{
         }
     }
 
-    //双方玩家战场上卡牌的战斗处理
+    //双方玩家战场上卡牌的战斗处理整体逻辑
     public void fight() {
+        //获得双方战场卡牌
         ArrayList<Chess> chessOne = playerOne.getBattleCards();
         ArrayList<Chess> chessTwo = playerTwo.getBattleCards();
         Random random = new Random();
+        //任何一方场上无存货卡牌则停止循环
         while (noCardsToBattle(1) && noCardsToBattle(2)) {
+            //如果玩家1的战场牌数比玩家2的多，则以玩家1的牌数为循环基准
+            //否则相反
             if (chessOne.size() >= chessTwo.size()) {
+                //从第一张牌开始一直遍历到与对方卡牌站位对齐的最后一张卡牌
                 for (int i = 0; i < chessOne.size(); ++i) {
                     if (i < chessTwo.size()) {
+                        //以当前卡牌位置寻找对手并处理战斗
                         findChessAndFight(chessOne, chessTwo, i);
                     } else {
+                        //其余没有对位卡牌的牌则额外寻找场上其他是否还有存货的牌并战斗
                         int finder = simpleFindChess(chessTwo);
                         if (finder != -1) {
                             cardFight(chessOne.get(i), chessTwo.get(finder));
