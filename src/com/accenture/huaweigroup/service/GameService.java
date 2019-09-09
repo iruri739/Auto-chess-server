@@ -102,10 +102,35 @@ public class GameService {
         } else {
             if (game.checkPlayerState(PlayerState.PREPARE)) {
                 game.setState(GameState.PREPARE);
+                game.setCanFight(true);
                 return "true";
             }
         }
         return "false";
+    }
+
+    /**
+     * 检查玩家是否可以进入战斗状态
+     * @param gameId
+     * @param playerId
+     * @return
+     */
+    public boolean gameBattleCheck(String gameId, int playerId) {
+        Game game = ResManager.findGameById(gameId);
+        Player player = game.getPlayer(playerId);
+        if (player.getState() != PlayerState.BATTLE) {
+            player.setState(PlayerState.BATTLE);
+            return false;
+        } else {
+            if (game.checkPlayerState(PlayerState.BATTLE)) {
+                game.setState(GameState.BATTLE);
+                if (game.isCanFight()) {
+                    game.fight();
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean buyNewCards(String gameId, int playerId, ArrayList<Chess> newCards) throws Exception {
@@ -147,27 +172,6 @@ public class GameService {
         }
         game.setPlayerBattleCards(data.getPlayerId(),(ArrayList<Chess>) data.getCards());
         return true;
-    }
-
-    /**
-     * 检查玩家是否可以进入战斗状态
-     * @param gameId
-     * @param playerId
-     * @return
-     */
-    public boolean gameBattleCheck(String gameId, int playerId) {
-        Game game = ResManager.findGameById(gameId);
-        Player player = game.getPlayer(playerId);
-        if (player.getState() != PlayerState.BATTLE) {
-            player.setState(PlayerState.BATTLE);
-            return false;
-        } else {
-            if (game.checkPlayerState(PlayerState.BATTLE)) {
-                game.setState(GameState.BATTLE);
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

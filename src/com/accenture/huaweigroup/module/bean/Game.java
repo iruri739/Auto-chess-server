@@ -15,18 +15,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class Game {
+public class Game{
     private static final int PLAYER_DEFAULT_PREPARETIME = 30;
     private static final int BATTLE_DEFAULT_TIME = 60;
-    private static final ScheduledExecutorService scheduleService = Executors.newSingleThreadScheduledExecutor();
 
     private String id;
     private int totalTime = 0;
     private int rounds = 1;
     private int prepareTime = PLAYER_DEFAULT_PREPARETIME;
-    private boolean startPrepare = true;
+    private boolean canFight = true;
     private int battleTime = BATTLE_DEFAULT_TIME;
-    private boolean startBattle = true;
     private GameState state = GameState.CREATED;
     private Player playerOne = new Player();
     private Player playerTwo = new Player();
@@ -42,37 +40,6 @@ public class Game {
         this.playerTwo.setId(playerTwoId);
     }
 
-//    @Scheduled(initialDelay = 0, fixedRate = 1000)
-//    private void readyToPrepare() {
-//        if (state != GameState.PREPARE) {
-//            state = GameState.GAMING;
-//        } else if (state == GameState.PREPARE) {
-//
-//        }
-//    }
-
-    @Scheduled(initialDelay = 0, fixedRate = 1000)
-    private void stateChange() {
-//        判断双方玩家是否进入准备阶段，进入则回合数增加，后期加入其它处理
-        if (checkPlayerState(PlayerState.PREPARE)) {
-            rounds++;
-            state = GameState.GAMING;
-        }
-        //判断双方玩家是否进入战斗阶段，进入则服务器进行逻辑战斗，处理相关数据
-        if (checkPlayerState(PlayerState.BATTLE)) {
-            fight();
-            state = GameState.GAMING;
-        }
-    }
-
-
-    public boolean containPlayer(int playerId) {
-        if (playerOne.getId() == playerId || playerTwo.getId() == playerId) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean checkPlayerState(PlayerState state) {
         if (playerOne.getState() == state && playerTwo.getState() == state) {
             return true;
@@ -80,22 +47,9 @@ public class Game {
         return false;
     }
 
-    public void resetTime() {
-        this.prepareTime = PLAYER_DEFAULT_PREPARETIME;
-        this.playerOne.setState(PlayerState.PREPARE);
-        this.playerTwo.setState(PlayerState.PREPARE);
-    }
 
     public Player getPlayer(int playerId) {
         if (playerOne.getId() == playerId) {
-            return playerOne;
-        } else {
-            return playerTwo;
-        }
-    }
-
-    public Player getConponentPlayer(int playerId) {
-        if (playerOne.getId() != playerId) {
             return playerOne;
         } else {
             return playerTwo;
@@ -230,7 +184,7 @@ public class Game {
     }
 
     //双方玩家战场上卡牌的战斗处理
-    private void fight() {
+    public void fight() {
         ArrayList<Chess> chessOne = playerOne.getBattleCards();
         ArrayList<Chess> chessTwo = playerTwo.getBattleCards();
         Random random = new Random();
@@ -261,6 +215,8 @@ public class Game {
         }
         battleResult();
         refeashGold();
+        battleFinishCheck();
+        canFight = false;
     }
 
     //获取玩家手牌
@@ -318,20 +274,12 @@ public class Game {
         this.playerTwo = playerTwo;
     }
 
-    public boolean isStartPrepare() {
-        return startPrepare;
+    public boolean isCanFight() {
+        return canFight;
     }
 
-    public void setStartPrepare(boolean startPrepare) {
-        this.startPrepare = startPrepare;
-    }
-
-    public boolean isStartBattle() {
-        return startBattle;
-    }
-
-    public void setStartBattle(boolean startBattle) {
-        this.startBattle = startBattle;
+    public void setCanFight(boolean canFight) {
+        this.canFight = canFight;
     }
 
     public int getTotalTime() {

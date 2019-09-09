@@ -133,6 +133,7 @@ public class ResManager {
     }
 
     public static void addToGameList(Game game) {
+
         gameList.put(game.getId(), game);
     }
 
