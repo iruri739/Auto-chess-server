@@ -22,7 +22,7 @@ spring:
 #        show-sql: true
     devtools:
         restart:
-            enabled: true   #热部署生效
+            enabled: false   #热部署生效
             additional-paths: src/,resources/    #设置刷新目录
     freemarker:
         cache: false

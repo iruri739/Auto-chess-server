@@ -46,6 +46,7 @@ public class UserService {
             if (user.getPwd().equals(DigestUtils.md5DigestAsHex(userPwd.getBytes()))) {
 //                token = userManager.addUserToList(user.getId());
 //                return new UserToken(true ,user.getId(), token);
+                ResManager.addUserToList(user.getId(), true);
                 return user.getId();
             }
         }
@@ -64,6 +65,7 @@ public class UserService {
             user = new User(userName, userPwd, null, userName);
             userMapper.insert(user);
             user = userMapper.getUserByName(userName);
+            ResManager.addUserToList(user.getId(), true);
 //            String token = TokenGenerator.generate(user.getId());
 //            userManager.addUserToList(user.getId());
 //            userToken.setState(true);

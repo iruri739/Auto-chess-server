@@ -108,8 +108,33 @@ public class GameService {
         return "false";
     }
 
+    public boolean buyNewCards(String gameId, int playerId, ArrayList<Chess> newCards) throws Exception {
+        Game game = ResManager.findGameById(gameId);
+        Player player = game.getPlayer(playerId);
+        if (newCards == null) {
+            newCards = new ArrayList<>();
+        }
+        for (Chess chess : newCards) {
+            player.setGold(player.getGold() - chess.getPrice());
+        }
+        player.getHandCards().addAll(newCards);
+        LOG.info("###### 玩家 "+ player.getName() +" 添加新卡牌");
+        LOG.info(newCards.toString());
+        return true;
+    }
+
+    public PlayerBattleData sendBattleData(String gameId) throws Exception {
+        Game game = ResManager.findGameById(gameId);
+        PlayerBattleData data = new PlayerBattleData();
+        data.setPlayerOneId(game.getPlayerOne().getId());
+        data.setPlayerOneBattleCards(game.getPlayerOne().getBattleCards());
+        data.setPlayerTwoId(game.getPlayerTwo().getId());
+        data.setPlayerTwoBattleCards(game.getPlayerTwo().getBattleCards());
+        return data;
+    }
+
     /**
-     * UpdateGameData包含游戏id、玩家id、玩家待选区，手牌，战场的卡牌id列表
+     * UpdateGameData包含游戏id、玩家id、战场的卡牌id列表
      * 根据以上信息更新某一场游戏某位玩家的卡牌信息
      *
      * @param data 前端传来的信息
@@ -117,22 +142,10 @@ public class GameService {
      */
     public boolean battleDataApi(UpdateGameData data) throws Exception {
         Game game = ResManager.findGameById(data.getGameId());
-        ArrayList<Chess> newChessList = new ArrayList<>();
-        for (int cardId : data.getBattleCards()) {
-            newChessList.add(chessManager.getChess(cardId));
+        if (data.getCards() == null) {
+            data.setCards(new ArrayList<>());
         }
-        game.setPlayerBattleCards(data.getPlayerId(), newChessList);
-        newChessList.clear();
-        for (int cardId : data.getHandCards()) {
-            newChessList.add(chessManager.getChess(cardId));
-        }
-        game.setPlayerHandCards(data.getPlayerId(), newChessList);
-        newChessList.clear();
-        for (int cardId : data.getCardInventory()) {
-            newChessList.add(chessManager.getChess(cardId));
-        }
-        game.setPlayerCardInventory(data.getPlayerId(), newChessList);
-//        game.refreshData(data.getPlayerId(), data);
+        game.setPlayerBattleCards(data.getPlayerId(),(ArrayList<Chess>) data.getCards());
         return true;
     }
 
