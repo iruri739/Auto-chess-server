@@ -32,10 +32,6 @@ public class RedisTest {
 
     @Test
     public void redisChessObjectWriteAndReadTest() {
-        Chess chess = chessService.createChess(1);
-        redisTemplate.opsForValue().set(1, chess);
 
-        Chess testChess = (Chess) redisTemplate.opsForValue().get(1);
-        System.out.println(testChess);
     }
 }

@@ -6,6 +6,7 @@ import com.accenture.huaweigroup.module.bean.UserToken;
 import com.accenture.huaweigroup.module.entity.User;
 import com.accenture.huaweigroup.module.mapper.UserMapper;
 import com.accenture.huaweigroup.util.MD5;
+import com.accenture.huaweigroup.util.TokenGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,16 +53,23 @@ public class UserService {
 
     //用户注册，首先检查注册用户名是否已经存在
     //如果存在则返回 false 否则注册用户并返回 true
-    public int register(String userName, String userPwd) throws Exception {
+    public UserToken register(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
+        UserToken userToken = new UserToken();
+        userToken.setState(false);
         if (user == null) {
-            userPwd = MD5.md5(userPwd);
+            userPwd = DigestUtils.md5DigestAsHex(userPwd.getBytes());
             user = new User(userName, userPwd, null, userName);
             userMapper.insert(user);
             user = userMapper.getUserByName(userName);
-            return user.getId();
+            String token = TokenGenerator.generate(user.getId());
+            userManager.addUserToList(user.getId());
+            userToken.setState(true);
+            userToken.setId(user.getId());
+            userToken.setToken(token);
+            return userToken;
         }
-        return 0;
+        return userToken;
     }
 
     /**

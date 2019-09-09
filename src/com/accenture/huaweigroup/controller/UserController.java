@@ -1,6 +1,7 @@
 package com.accenture.huaweigroup.controller;
 
 import com.accenture.huaweigroup.module.bean.UserDTO;
+import com.accenture.huaweigroup.module.bean.UserToken;
 import com.accenture.huaweigroup.module.entity.User;
 import com.accenture.huaweigroup.service.UserService;
 
@@ -34,35 +35,42 @@ public class UserController {
 
     @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回0", httpMethod = "GET")
     @GetMapping("/login")
-    public int loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
-        int id = 0;
+    public UserToken loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
+        UserToken userToken = new UserToken();
+        userToken.setState(false);
         try {
-            id = userService.loginCheck(userName, userPwd);
-            if (id != 0) {
-                LOG.info("用户[" + userName + "] 登录成功！");
-                return id;
+            userToken = userService.loginCheck(userName, userPwd);
+            if (userToken.isState()) {
+                LOG.info("###### 用户 " + userName + " 登录成功 ######");
+                LOG.info("###### 用户token ######");
+                LOG.info(userToken.getToken());
+                return userToken;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("用户[" + userName + "] 登录发生错误！！！");
+            LOG.error("###### 用户 " + userName + " 登录发生错误！！！ ######");
         }
-        return 0;
+        return userToken;
     }
 
     @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回ID，否则返回0，发生错误状态码400,500", httpMethod = "POST")
     @PostMapping(value = "/register")
-    public int registerUser(@RequestBody UserDTO info) {
+    public UserToken registerUser(@RequestBody UserDTO info) {
+        UserToken userToken = new UserToken();
+        userToken.setState(false);
         try {
-            int id = userService.register(info.userName, info.userPwd);
-            if (id != 0) {
+            userToken = userService.register(info.userName, info.userPwd);
+            if (userToken.isState()) {
                 LOG.info("用户[" + info.userName + "] 注册成功！");
-                return id;
+                LOG.info("###### 用户token ######");
+                LOG.info(userToken.getToken());
+                return userToken;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("用户[" + info.userName + "] 注册过程发送错误！！！");
+            LOG.error("###### 用户 " + info.userName + " 登录发生错误！！！ ######");
         }
-        return 0;
+        return userToken;
     }
 
     @ApiOperation(value = "用户登录状态检测", notes = "检测用户在线状态，在线则返回true，离线则返回false", httpMethod = "GET")
