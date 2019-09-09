@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accenture.huaweigroup.module.mapper.AdminMapper">
+    <resultMap id="getChessResultMap" type="com.accenture.huaweigroup.module.entity.Chess">
+        <id property="id" column="chess_id"/>
+        <result property="name" column="chess_name"/>
+        <result property="price" column="chess_price"/>
+        <result property="level" column="chess_level"/>
+        <result property="hp" column="chess_hp"/>
+        <result property="attack" column="chess_attack"/>
+        <result property="type" column="chess_type" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="img" column="chess_img"/>
+    </resultMap>
+
+
+    <insert id="insertChess_Land" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+        insert into chess values (null,#{name},#{price},#{level},#{hp},#{attack},0,null)
+    </insert>
+
+    <insert id="insertChess_Sea" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+        insert into chess values (null,#{name},#{price},#{level},#{hp},#{attack},1,null)
+    </insert>
+
+    <insert id="insertChess_Air" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+        insert into chess values (null,#{name},#{price},#{level},#{hp},#{attack},2,null)
+    </insert>
+
+    <delete id="deleteCard" parameterType="int">
+        delete from chess where chess_id=#{chess_id}
+    </delete>
+</mapper>

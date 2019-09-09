@@ -120,4 +120,3 @@ public class Chess implements Serializable {
     }
 }
 
-

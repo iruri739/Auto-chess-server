@@ -26,8 +26,8 @@ public class RedisTest {
 
     @Test
     public void redisReadAndWriteTest() {
-        stringRedisTemplate.opsForValue().set("test", "123");
-        Assert.assertEquals("123", stringRedisTemplate.opsForValue().get("test"));
+        stringRedisTemplate.opsForValue().set("root", "root");
+        Assert.assertEquals("root", stringRedisTemplate.opsForValue().get("test"));
     }
 
     @Test
