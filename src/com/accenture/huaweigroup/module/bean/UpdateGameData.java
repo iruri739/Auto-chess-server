@@ -7,9 +7,7 @@ import java.util.List;
 public class UpdateGameData {
     private String gameId;
     private int playerId;
-    private List<Integer> battleCards;
-    private List<Integer> handCards;
-    private List<Integer> cardInventory;
+    private List<Chess> Cards;
 
     public String getGameId() {
         return gameId;
@@ -27,27 +25,11 @@ public class UpdateGameData {
         this.playerId = playerId;
     }
 
-    public List<Integer> getBattleCards() {
-        return battleCards;
+    public List<Chess> getCards() {
+        return Cards;
     }
 
-    public void setBattleCards(List<Integer> battleCards) {
-        this.battleCards = battleCards;
-    }
-
-    public List<Integer> getHandCards() {
-        return handCards;
-    }
-
-    public void setHandCards(List<Integer> handCards) {
-        this.handCards = handCards;
-    }
-
-    public List<Integer> getCardInventory() {
-        return cardInventory;
-    }
-
-    public void setCardInventory(List<Integer> cardInventory) {
-        this.cardInventory = cardInventory;
+    public void setCards(List<Chess> cards) {
+        Cards = cards;
     }
 }

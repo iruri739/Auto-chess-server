@@ -1,5 +1,6 @@
 package com.accenture.huaweigroup.controller;
 
+import com.accenture.huaweigroup.module.bean.PlayerBattleData;
 import com.accenture.huaweigroup.module.bean.UpdateGameData;
 import com.accenture.huaweigroup.module.entity.*;
 import com.accenture.huaweigroup.module.bean.BattleData;
@@ -38,11 +39,11 @@ public class GameController {
         return false;
     }
 
-    @ApiOperation(value = "断线重连检测", notes = "检查用户是否已经在游戏中，如果是则返回true，否则返回false", httpMethod = "GET")
-    @GetMapping("/checkGameState")
-    public boolean disconnectCheck(@RequestParam("userId") int userId) {
-        return gameService.checkGameState(userId);
-    }
+//    @ApiOperation(value = "断线重连检测", notes = "检查用户是否已经在游戏中，如果是则返回true，否则返回false", httpMethod = "GET")
+//    @GetMapping("/checkGameState")
+//    public boolean disconnectCheck(@RequestParam("userId") int userId) {
+//        return gameService.checkGameState(userId);
+//    }
 
     @ApiOperation(value = "获取初始化数据接口", notes = "通过调用该接口获得初始json数据对象", httpMethod = "GET")
     @GetMapping("/defaultDataModel")
@@ -68,6 +69,27 @@ public class GameController {
                                          @RequestParam("playerId") int playerId)
     {
         return gameService.changePlayerInventory(gameId, playerId);
+    }
+
+    @ApiOperation(value = "上传新购买卡牌数据", notes = "附带参数玩家ID、游戏ID、卡牌对象数组", httpMethod = "POST")
+    @PostMapping("/updateHandCards")
+    public boolean updateHandCards(@RequestBody UpdateGameData data) {
+        try {
+            return gameService.buyNewCards(data.getGameId(), data.getPlayerId(), (ArrayList<Chess>) data.getCards());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @PostMapping("/downloadBattleData")
+    public PlayerBattleData sendBattleData(String gameId) {
+        try {
+            return gameService.sendBattleData(gameId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")

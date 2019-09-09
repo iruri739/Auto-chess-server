@@ -24,9 +24,9 @@ public class Game {
     private int totalTime = 0;
     private int rounds = 1;
     private int prepareTime = PLAYER_DEFAULT_PREPARETIME;
-//    private boolean startPrepare = false;
+    private boolean startPrepare = true;
     private int battleTime = BATTLE_DEFAULT_TIME;
-//    private boolean startBattle = false;
+    private boolean startBattle = true;
     private GameState state = GameState.CREATED;
     private Player playerOne = new Player();
     private Player playerTwo = new Player();
@@ -54,24 +54,17 @@ public class Game {
     @Scheduled(initialDelay = 0, fixedRate = 1000)
     private void stateChange() {
         //判断双方玩家是否进入准备阶段，进入则回合数增加，后期加入其它处理
-        if (checkPlayerState(PlayerState.PREPARE)) {
-            rounds++;
-            state = GameState.GAMING;
-        }
-        //判断双方玩家是否进入战斗阶段，进入则服务器进行逻辑战斗，处理相关数据
-        if (checkPlayerState(PlayerState.BATTLE)) {
-            fight();
-            state = GameState.GAMING;
-        }
+//        if (checkPlayerState(PlayerState.PREPARE)) {
+//            rounds++;
+//            state = GameState.GAMING;
+//        }
+//        //判断双方玩家是否进入战斗阶段，进入则服务器进行逻辑战斗，处理相关数据
+//        if (checkPlayerState(PlayerState.BATTLE)) {
+//            fight();
+//            state = GameState.GAMING;
+//        }
     }
 
-//    public void refreshData(int playerId, UpdateGameData data) {
-//        Player player = getPlayer(playerId);
-//        ArrayList<Chess> chessList = new ArrayList<>();
-//        for (int i : data.getBattleCards()) {
-//            chessList.add()
-//        }
-//    }
 
     public boolean containPlayer(int playerId) {
         if (playerOne.getId() == playerId || playerTwo.getId() == playerId) {
@@ -323,6 +316,22 @@ public class Game {
 
     public void setPlayerTwo(Player playerTwo) {
         this.playerTwo = playerTwo;
+    }
+
+    public boolean isStartPrepare() {
+        return startPrepare;
+    }
+
+    public void setStartPrepare(boolean startPrepare) {
+        this.startPrepare = startPrepare;
+    }
+
+    public boolean isStartBattle() {
+        return startBattle;
+    }
+
+    public void setStartBattle(boolean startBattle) {
+        this.startBattle = startBattle;
     }
 
     public int getTotalTime() {

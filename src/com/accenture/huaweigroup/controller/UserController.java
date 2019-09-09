@@ -1,5 +1,6 @@
 package com.accenture.huaweigroup.controller;
 
+import com.accenture.huaweigroup.business.ResManager;
 import com.accenture.huaweigroup.module.bean.UserDTO;
 import com.accenture.huaweigroup.module.bean.UserToken;
 import com.accenture.huaweigroup.module.entity.User;
@@ -43,6 +44,7 @@ public class UserController {
             userId = userService.loginCheck(userName, userPwd);
             if (userId != 0) {
                 LOG.info("###### 用户 " + userName + " 登录成功 ######");
+
 //                LOG.info("###### 用户token ######");
 //                LOG.info(userToken.getToken());
 //                return userToken;
