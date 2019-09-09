@@ -1,5 +1,6 @@
 package com.accenture.huaweigroup.service;
 
+import com.accenture.huaweigroup.business.ChessManager;
 import com.accenture.huaweigroup.business.ResManager;
 import com.accenture.huaweigroup.module.entity.*;
 import com.accenture.huaweigroup.module.bean.*;
@@ -20,9 +21,8 @@ public class GameService {
 
     @Autowired
     private GameRecordMapper gameRecordMapper;
-
     @Autowired
-    private ChessService chessService;
+    private ChessManager chessManager;
     @Autowired
     private UserService userService;
 
@@ -73,9 +73,9 @@ public class GameService {
     public void createGame(int playerOneId, int playerTwoId) {
         String uuid = UUID.randomUUID().toString().substring(24);
         Game newGame = new Game(uuid, playerOneId, playerTwoId);
-        newGame.getPlayerOne().setCardInventory(chessService.getRandomCards());
+        newGame.getPlayerOne().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         newGame.getPlayerOne().setName(userService.getUserById(playerOneId).getName());
-        newGame.getPlayerTwo().setCardInventory(chessService.getRandomCards());
+        newGame.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         newGame.getPlayerTwo().setName(userService.getUserById(playerTwoId).getName());
         ResManager.addToGameList(newGame);
     }
@@ -141,7 +141,7 @@ public class GameService {
         Player player = game.getPlayer(playerId);
         if (player.getGold() >= 2) {
             player.setGold(player.getGold() - 2);
-            ArrayList<Chess> newInventory = chessService.getRandomCards();
+            ArrayList<Chess> newInventory = (ArrayList<Chess>) chessManager.getRandomChess();
             player.setCardInventory(newInventory);
             return newInventory;
         }
@@ -151,8 +151,8 @@ public class GameService {
     //获取游戏初始数据
     public BattleData getInitGameData(int playerId) {
         Game game = ResManager.findGameByPlayer(playerId);
-        game.getPlayerOne().setCardInventory(chessService.getRandomCards());
-        game.getPlayerTwo().setCardInventory(chessService.getRandomCards());
+        game.getPlayerOne().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
+        game.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         BattleData data = new BattleData(game);
         return data;
     }
@@ -174,58 +174,6 @@ public class GameService {
             return false;
         }
     }
-
-
-
-    //计时轮训gamelist清除异常游戏并做异常处理
-//    @Scheduled(initialDelay = 1000, fixedRate = 60*1000)
-//    private void cycleCheckGame() {
-//
-//    }
-
-
-//    /**
-//     *  检查双方玩家是否已经做好匹配准备
-//     * @param playerId 玩家ID
-//     * @return
-//     */
-//    public boolean matchReadyCheck(int playerId) {
-//        Game game = ResManager.findGameByPlayer(playerId);
-//        if (game == null) {
-//            return false;
-//        }
-//        if (game.getPlayer(playerId).getState() == PlayerState.NONE) {
-//            game.getPlayer(playerId).setState(PlayerState.REDAY);
-//            return false;
-//        } else {
-//            if (game.checkPlayerState(PlayerState.REDAY)) {
-//                ResManager.matchFinish(playerId);
-//                game.getPlayerOne().setState(PlayerState.PREPARE);
-//                game.getPlayerTwo().setState(PlayerState.PREPARE);
-//                GameRecord gameRecord = gameRecordMapper.findById(game.getId());
-//                gameRecord.setGameId(game.getId());
-//                gameRecordMapper.update(gameRecord);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    /**
-////     * 取消匹配流程
-////     *
-////     * @param playerId
-////     * @return
-////     * @throws Exception
-////     */
-////    public boolean cancelMatch(int playerId) throws Exception {
-////        if (ResManager.isMatching(playerId)) {
-////            ResManager.cancelMatch(playerId);
-////            return true;
-////        }
-////        return false;
-////    }
-
 
 
 }

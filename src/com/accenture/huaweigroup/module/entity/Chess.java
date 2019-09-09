@@ -2,8 +2,10 @@ package com.accenture.huaweigroup.module.entity;
 
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Component
-public class Chess {
+public class Chess implements Serializable {
     private int id;
     private String name;
     private int price;

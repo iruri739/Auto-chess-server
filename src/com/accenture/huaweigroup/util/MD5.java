@@ -15,6 +15,7 @@ public class MD5 {
             md.update(plainText.getBytes());
             //获得加密后的数据
             secretBytes = md.digest();
+
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("没有md5这个算法！");
         }
