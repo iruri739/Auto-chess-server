@@ -2,7 +2,8 @@ package com.accenture.huaweigroup.Interceptor;
 
 import com.accenture.huaweigroup.annotation.AuthToken;
 import com.accenture.huaweigroup.util.CommonUtil;
-import net.minidev.json.JSONObject;
+
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
