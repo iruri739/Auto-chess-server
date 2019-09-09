@@ -108,6 +108,33 @@ public class GameService {
         return "false";
     }
 
+    /**
+     * UpdateGameData包含游戏id、玩家id、玩家待选区，手牌，战场的卡牌id列表
+     * 根据以上信息更新某一场游戏某位玩家的卡牌信息
+     *
+     * @param data 前端传来的信息
+     * @return 成功返回true，否则报错
+     */
+    public boolean battleDataApi(UpdateGameData data) throws Exception {
+        Game game = ResManager.findGameById(data.getGameId());
+        ArrayList<Chess> newChessList = new ArrayList<>();
+        for (int cardId : data.getBattleCards()) {
+            newChessList.add(chessManager.getChess(cardId));
+        }
+        game.setPlayerBattleCards(data.getPlayerId(), newChessList);
+        newChessList.clear();
+        for (int cardId : data.getHandCards()) {
+            newChessList.add(chessManager.getChess(cardId));
+        }
+        game.setPlayerHandCards(data.getPlayerId(), newChessList);
+        newChessList.clear();
+        for (int cardId : data.getCardInventory()) {
+            newChessList.add(chessManager.getChess(cardId));
+        }
+        game.setPlayerCardInventory(data.getPlayerId(), newChessList);
+//        game.refreshData(data.getPlayerId(), data);
+        return true;
+    }
 
     /**
      * 检查玩家是否可以进入战斗状态
@@ -158,12 +185,7 @@ public class GameService {
     }
 
 
-    //获取并更新玩家数据
-    public BattleData battleDataApi(String gameId, int playerId, BattleData data) {
-        Game game = ResManager.findGameById(gameId);
-        game.refreshData(data, playerId);
-        return new BattleData(game);
-    }
+
 
     //掉线重连
     public boolean checkGameState(int playerId) {

@@ -38,6 +38,17 @@ public class ChessManager implements InitializingBean {
     }
 
     /**
+     * 获得指定id的卡牌副本对象
+     *
+     * @param chessId 指定卡牌id
+     * @return 指定id的卡牌副本对象
+     */
+    public Chess getChess(int chessId) {
+        Chess chess = new Chess((Chess) redisTemplate.opsForValue().get(CHESS_DB + chessId));
+        return chess;
+    }
+
+    /**
      * 随机5张卡牌
      *
      * @return 返回包含随机5张卡牌的列表

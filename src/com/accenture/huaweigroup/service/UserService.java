@@ -39,37 +39,41 @@ public class UserService {
      * @return 返回包含验证状态、用户id、用户token的json对象
      * @throws Exception
      */
-    public UserToken loginCheck(String userName, String userPwd) throws Exception {
+    public int loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         String token;
         if (user != null) {
             if (user.getPwd().equals(DigestUtils.md5DigestAsHex(userPwd.getBytes()))) {
-                token = userManager.addUserToList(user.getId());
-                return new UserToken(true ,user.getId(), token);
+//                token = userManager.addUserToList(user.getId());
+//                return new UserToken(true ,user.getId(), token);
+                return user.getId();
             }
         }
-        return new UserToken(false, 0, null);
+//        return new UserToken(false, 0, null);
+        return 0;
     }
 
     //用户注册，首先检查注册用户名是否已经存在
     //如果存在则返回 false 否则注册用户并返回 true
-    public UserToken register(String userName, String userPwd) throws Exception {
+    public int register(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
-        UserToken userToken = new UserToken();
-        userToken.setState(false);
+//        UserToken userToken = new UserToken();
+//        userToken.setState(false);
         if (user == null) {
             userPwd = DigestUtils.md5DigestAsHex(userPwd.getBytes());
             user = new User(userName, userPwd, null, userName);
             userMapper.insert(user);
             user = userMapper.getUserByName(userName);
-            String token = TokenGenerator.generate(user.getId());
-            userManager.addUserToList(user.getId());
-            userToken.setState(true);
-            userToken.setId(user.getId());
-            userToken.setToken(token);
-            return userToken;
+//            String token = TokenGenerator.generate(user.getId());
+//            userManager.addUserToList(user.getId());
+//            userToken.setState(true);
+//            userToken.setId(user.getId());
+//            userToken.setToken(token);
+//            return userToken;
+            return user.getId();
         }
-        return userToken;
+//        return userToken;
+        return 0;
     }
 
     /**

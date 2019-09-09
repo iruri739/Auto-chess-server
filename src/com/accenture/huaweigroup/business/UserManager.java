@@ -44,7 +44,11 @@ public class UserManager implements InitializingBean {
     }
 
     public boolean userIsOnline(String token) {
+        LOG.info("###### 检验Token ######");
         Object object = redisTemplate.opsForHash().get(USER_DB, token);
+        if (object == null) {
+            LOG.info("##########################objec is null!!!!#########################");
+        }
         return object != null;
     }
 
