@@ -85,7 +85,7 @@ public class GameController {
     }
 
     @ApiOperation(value = "对方战场数据获取接口", notes = "向服务器发送自己的ID 获取对方的战场数据", httpMethod = "GET")
-    @PostMapping("/requestBattleData")
+    @GetMapping("/requestBattleData")
     public BattleData requestBattleData(@RequestParam("playerId") int playerId,
                                               @RequestParam("round") int round) {
         try {
