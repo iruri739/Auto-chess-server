@@ -150,7 +150,7 @@ public class GameService {
      * @return
      */
     public BattleData initRounds(int playerId) throws NoGameException {
-        LOG.info(String.format("###### 玩家 %s 请求获取游戏数据对象 ######"));
+        LOG.info(String.format("###### 玩家 %d 请求获取游戏数据对象 ######", playerId));
         Game game = ResManager.findGameByPlayer(playerId);
         if (game == null) {
             throw new NoGameException("玩家" + playerId + "所在游戏不存在！");

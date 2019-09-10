@@ -70,7 +70,7 @@ public class Game{
         if (this.calEndDT != null) {
             this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (new Date().getTime() - this.calEndDT.getTime()));
             this.prepareTime = this.lastTime;
-            LOG.info(String.format("###### 游戏 %s 剩余准备时间： %d", this.prepareTime));
+            LOG.info(String.format("###### 游戏 %s 剩余准备时间： %d", this.id, this.prepareTime));
         }
     }
 
