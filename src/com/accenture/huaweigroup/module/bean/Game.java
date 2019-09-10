@@ -23,7 +23,7 @@ public class Game{
     //计算战斗结果的系统时间
     private Date calEndDT = null;
     //当前回合倒计时的时长
-    private int lastTime;
+    private int lastTime = PLAYER_DEFAULT_PREPARETIME;
     private String id;
     private int totalTime = 0;
     private int rounds = 1;

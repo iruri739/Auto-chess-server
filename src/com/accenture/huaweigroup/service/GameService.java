@@ -78,7 +78,7 @@ public class GameService {
         newGame.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         newGame.getPlayerTwo().setName(userService.getUserById(playerTwoId).getName());
         ResManager.addToGameList(newGame);
-//        GameThreadService.run(newGame.getId());
+        GameThreadService.run(newGame.getId());
     }
 
     /**
@@ -206,6 +206,7 @@ public class GameService {
     //获取游戏初始数据
     public BattleData getInitGameData(int playerId) {
         Game game = ResManager.findGameByPlayer(playerId);
+        game.calcLastTime();
         game.getPlayerOne().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         game.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         BattleData data = new BattleData(game);

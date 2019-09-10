@@ -19,7 +19,7 @@ public class GameThread implements Runnable {
             while(true)
             {
                 //sleep
-                Thread.sleep(Game.PLAYER_DEFAULT_PREPARETIME + 6);
+                Thread.sleep(Game.PLAYER_DEFAULT_PREPARETIME);
                 //通过参数gameId从全局map中获取游戏数据
                 Game game = ResManager.findGameById(this.gameId);
                 //计算战斗
