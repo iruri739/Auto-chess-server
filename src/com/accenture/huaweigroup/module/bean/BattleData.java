@@ -5,10 +5,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BattleData {
-    private int state;
+    private GameState state;
     private String gameId;
     private int prepareTime;
-    private int battleTime;
     private int rounds;
     private Player playerOneData;
     private Player playerTwoData;
@@ -18,33 +17,25 @@ public class BattleData {
     }
 
     public BattleData(Game game) {
-        state = 0;
+        state = game.getState();
         gameId = game.getId();
         rounds = game.getRounds();
         prepareTime = game.getPrepareTime();
-        battleTime = game.getBattleTime();
         playerOneData = game.getPlayerOne();
         playerTwoData = game.getPlayerTwo();
     }
 
     @Override
     public String toString() {
-        return "BattleData{" +
-                "state=" + state +
-                ", gameId=" + gameId +
-                ", prepareTime=" + prepareTime +
-                ", battleTime=" + battleTime +
-                ", rounds=" + rounds +
-                ", playerOneData=" + playerOneData +
-                ", playerTwoData=" + playerTwoData +
-                '}';
+        return String.format("游戏数据对象：\n{\n状态：%s\n游戏ID： %s\n" +
+                "游戏轮数： %d\n剩余准备时间： %d\n}\n", state, gameId, rounds, prepareTime);
     }
 
-    public int getState() {
+    public GameState getState() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(GameState state) {
         this.state = state;
     }
 
@@ -62,14 +53,6 @@ public class BattleData {
 
     public void setPrepareTime(int prepareTime) {
         this.prepareTime = prepareTime;
-    }
-
-    public int getBattleTime() {
-        return battleTime;
-    }
-
-    public void setBattleTime(int battleTime) {
-        this.battleTime = battleTime;
     }
 
     public int getRounds() {

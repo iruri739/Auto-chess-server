@@ -15,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,10 +39,19 @@ public class UserController {
         return userService.getOnlineUserList();
     }
 
-//    @PostMapping("/uploadAvatar")
-//    public boolean uploadAvatar(@RequestParam int userId, @RequestBody MultipartFile) {
-//
-//    }
+    @PostMapping("/uploadAvatar")
+    public boolean uploadAvatar(@RequestBody MultipartFile file) {
+//        @RequestParam int userId, @RequestBody MultipartFile file
+//        File newFile = new File("/resources/static/WEB-INF/imgs/" + file.getOriginalFilename());
+//        newFile.mkdirs();
+//        System.out.println(newFile.getAbsolutePath());
+//        try {
+//            file.transferTo(newFile);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        return false;
+    }
 
     @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回0", httpMethod = "GET")
     @GetMapping("/login")

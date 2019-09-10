@@ -4,6 +4,8 @@ import com.accenture.huaweigroup.business.ChessManager;
 import com.accenture.huaweigroup.business.ResManager;
 import com.accenture.huaweigroup.module.entity.*;
 import com.accenture.huaweigroup.module.bean.*;
+import com.accenture.huaweigroup.module.exception.NoGameException;
+import com.accenture.huaweigroup.module.exception.NoPlayerException;
 import com.accenture.huaweigroup.module.mapper.GameRecordMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,62 +79,11 @@ public class GameService {
         newGame.getPlayerOne().setName(userService.getUserById(playerOneId).getName());
         newGame.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         newGame.getPlayerTwo().setName(userService.getUserById(playerTwoId).getName());
+        newGame.setState(GameState.PREPARE);
         ResManager.addToGameList(newGame);
         GameThreadService.run(newGame.getId());
     }
 
-    /**
-     * 检查玩家是否可以进入游戏准备阶段
-     * @param gameId 游戏ID
-     * @param playerId 玩家ID
-     * @return
-     */
-    public String gameGoPrepareCheck(String gameId, int playerId) {
-        Game game = ResManager.findGameById(gameId);
-        Player player = game.getPlayer(playerId);
-        if (game.getState() == GameState.FINISHED) {
-            if (player.getHp() > 0) {
-                return "win";
-            } else {
-                return "lose";
-            }
-        }
-        if (player.getState() != PlayerState.PREPARE) {
-            player.setState(PlayerState.PREPARE);
-            return "false";
-        } else {
-            if (game.checkPlayerState(PlayerState.PREPARE)) {
-                game.setState(GameState.PREPARE);
-                game.setCanFight(true);
-                return "true";
-            }
-        }
-        return "false";
-    }
-
-    /**
-     * 检查玩家是否可以进入战斗状态
-     * @param gameId
-     * @param playerId
-     * @return
-     */
-    public boolean gameBattleCheck(String gameId, int playerId) {
-        Game game = ResManager.findGameById(gameId);
-        Player player = game.getPlayer(playerId);
-        if (player.getState() != PlayerState.BATTLE) {
-            player.setState(PlayerState.BATTLE);
-            return false;
-        } else {
-            if (game.checkPlayerState(PlayerState.BATTLE)) {
-                game.setState(GameState.BATTLE);
-                if (game.isCanFight()) {
-                    game.fight();
-                }
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * 添加玩家新购入的卡牌进入到手牌中
@@ -153,11 +104,18 @@ public class GameService {
             player.setGold(player.getGold() - chess.getPrice());
         }
         player.getHandCards().addAll(newCards);
-        LOG.info("###### 玩家 "+ player.getName() +" 添加新卡牌 ######");
-        LOG.info(newCards.toString());
+        LOG.info(String.format("######游戏%s 玩家 %s 添加新卡牌 ######", game.getId(), player.getName()));
+        LOG.info(ChessManager.formatShowChessList(newCards));
         return true;
     }
 
+    /**
+     * 返回指定游戏id的当前游戏数据对象
+     *
+     * @param gameId
+     * @return
+     * @throws Exception
+     */
     public PlayerBattleData sendBattleData(String gameId) throws Exception {
         Game game = ResManager.findGameById(gameId);
         PlayerBattleData data = new PlayerBattleData();
@@ -165,6 +123,7 @@ public class GameService {
         data.setPlayerOneBattleCards(game.getPlayerOne().getBattleCards());
         data.setPlayerTwoId(game.getPlayerTwo().getId());
         data.setPlayerTwoBattleCards(game.getPlayerTwo().getBattleCards());
+        LOG.info(String.format("###### 返回游戏 %s 的数据对象 ######", game.getId()));
         return data;
     }
 
@@ -181,7 +140,6 @@ public class GameService {
             data.setCards(new ArrayList<>());
         }
         game.setPlayerBattleCards(data.getPlayerId(),(ArrayList<Chess>) data.getCards());
-//        game.calcLastTime();
         return true;
     }
 
@@ -191,40 +149,47 @@ public class GameService {
      * @param playerId
      * @return
      */
-    public ArrayList<Chess> changePlayerInventory(String gameId, int playerId) {
+    public ArrayList<Chess> changePlayerInventory(String gameId, int playerId)
+            throws NoGameException, NoPlayerException {
         Game game = ResManager.findGameById(gameId);
+        if (game == null) {
+            throw new NoGameException("游戏 " + gameId + " 不存在！");
+        }
         Player player = game.getPlayer(playerId);
+        if (player == null) {
+            throw new NoPlayerException(("游戏 " + gameId + " 内不存在玩家 " + playerId));
+        }
         if (player.getGold() >= 2) {
             player.setGold(player.getGold() - 2);
             ArrayList<Chess> newInventory = (ArrayList<Chess>) chessManager.getRandomChess();
             player.setCardInventory(newInventory);
+            LOG.info(String.format("###### 玩家 %s 刷新待选区卡牌 ######", player.getName()));
+            ChessManager.formatShowChessList(newInventory);
             return newInventory;
         }
-        return new ArrayList<>();
+        LOG.info(String.format("###### 玩家 %s 金币不足以刷新待选区卡牌！！！ ######", player.getName()));
+        return null;
     }
 
-    //获取游戏初始数据
-    public BattleData getInitGameData(int playerId) {
+    /**
+     * 根据玩家ID返回玩家所在游戏的游戏数据对象
+     *
+     * @param playerId
+     * @return
+     */
+    public BattleData initRounds(int playerId) throws NoGameException {
+        LOG.info(String.format("###### 玩家 %s 请求"));
         Game game = ResManager.findGameByPlayer(playerId);
+        if (game == null) {
+            throw new NoGameException("玩家" + playerId + "所在游戏不存在！");
+        }
+        ResManager.changeUserState(playerId, true);
         game.calcLastTime();
         game.getPlayerOne().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         game.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
         BattleData data = new BattleData(game);
+        LOG.info(data.toString());
         return data;
     }
-
-
-
-
-    //掉线重连
-    public boolean checkGameState(int playerId) {
-        Game game = ResManager.findGameByPlayer(playerId);
-        if (game != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 
 }

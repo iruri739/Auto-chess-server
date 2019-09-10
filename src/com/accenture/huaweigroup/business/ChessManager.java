@@ -70,11 +70,11 @@ public class ChessManager implements InitializingBean {
         for (int i = 0; i < count; ++i) {
             int chessId = random.nextInt(chessSize) + 1;
             Chess originChess = (Chess) redisTemplate.opsForValue().get(CHESS_DB + chessId);
-            LOG.info("###### 成功从 Redis 数据库中读取 " + chessId + " 号卡牌的原始数据 ######");
-            LOG.info("卡牌信息：" + originChess);
+//            LOG.info("###### 成功从 Redis 数据库中读取 " + chessId + " 号卡牌的原始数据 ######");
+//            LOG.info("卡牌信息：" + originChess);
             if (originChess != null) {
                 Chess chess = new Chess(originChess);
-                LOG.info("###### 生成新卡牌副本对象并存入列表中 ######");
+//                LOG.info("###### 生成新卡牌副本对象并存入列表中 ######");
                 list.add(chess);
             } else {
                 LOG.error("###### 随机卡牌过程发生错误！！！ ######");
@@ -83,6 +83,14 @@ public class ChessManager implements InitializingBean {
         }
         LOG.info("###### 成功从 Redis 数据库中读取随机 " + count + " 张卡牌并生成副本列表返回 ######");
         return list;
+    }
+
+    public static String formatShowChessList(List<Chess> list) {
+        StringBuilder builder = new StringBuilder();
+        for (Chess c : list) {
+            builder.append(String.format("卡牌ID： %d 卡牌名： %s", c.getId(), c.getName()));
+        }
+        return builder.toString();
     }
 
 

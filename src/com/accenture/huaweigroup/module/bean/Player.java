@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 @Component
 public class Player {
-    private static final int PLAYER_TOTAL_HP = 100;
+    private static final int PLAYER_TOTAL_HP = 20;
     private static final int PLAYER_INIT_GOLD = 20;
 
     private int id;
@@ -16,11 +16,24 @@ public class Player {
     private int gold = PLAYER_INIT_GOLD;
     private int winCount = 0;
 
-    private PlayerState state = PlayerState.NONE;
 
     private ArrayList<Chess> handCards = new ArrayList<>();
     private ArrayList<Chess> battleCards = new ArrayList<>();
     private ArrayList<Chess> cardInventory = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", hp=" + hp +
+                ", gold=" + gold +
+                ", winCount=" + winCount +
+                ", handCards=" + handCards +
+                ", battleCards=" + battleCards +
+                ", cardInventory=" + cardInventory +
+                '}';
+    }
 
     public Player() {
         super();
@@ -32,19 +45,12 @@ public class Player {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", hp=" + hp +
-                ", gold=" + gold +
-                ", winCount=" + winCount +
-                ", state=" + state +
-                ", handCards=" + handCards +
-                ", battleCards=" + battleCards +
-                ", cardInventory=" + cardInventory +
-                '}';
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -53,14 +59,6 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getHp() {
@@ -85,14 +83,6 @@ public class Player {
 
     public void setWinCount(int winCount) {
         this.winCount = winCount;
-    }
-
-    public PlayerState getState() {
-        return state;
-    }
-
-    public void setState(PlayerState state) {
-        this.state = state;
     }
 
     public ArrayList<Chess> getHandCards() {

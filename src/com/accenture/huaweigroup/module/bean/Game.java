@@ -3,6 +3,8 @@ package com.accenture.huaweigroup.module.bean;
 import com.accenture.huaweigroup.module.entity.Chess;
 import com.accenture.huaweigroup.module.bean.GameState;
 import com.accenture.huaweigroup.service.ChessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,10 +17,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+
 @Component
 public class Game{
     public static final int PLAYER_DEFAULT_PREPARETIME = 30;
-    private static final int BATTLE_DEFAULT_TIME = 60;
+
+    private static final Logger LOG = LoggerFactory.getLogger(Game.class);
 
     //计算战斗结果的系统时间
     private Date calEndDT = null;
@@ -28,8 +32,6 @@ public class Game{
     private int totalTime = 0;
     private int rounds = 1;
     private int prepareTime = PLAYER_DEFAULT_PREPARETIME;
-    private boolean canFight = true;
-    private int battleTime = BATTLE_DEFAULT_TIME;
     private GameState state = GameState.CREATED;
     private Player playerOne = new Player();
     private Player playerTwo = new Player();
@@ -45,13 +47,6 @@ public class Game{
         this.playerTwo.setId(playerTwoId);
     }
 
-    public boolean checkPlayerState(PlayerState state) {
-        if (playerOne.getState() == state && playerTwo.getState() == state) {
-            return true;
-        }
-        return false;
-    }
-
     public Player getPlayer(int playerId) {
         if (playerOne.getId() == playerId) {
             return playerOne;
@@ -62,7 +57,7 @@ public class Game{
 
     public void calcLastTime() {
         if (this.calEndDT != null) {
-            this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (this.calEndDT.getTime() - new Date().getTime()));
+            this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (new Date().getTime() - this.calEndDT.getTime()));
             this.prepareTime = this.lastTime;
         }
     }
@@ -234,6 +229,8 @@ public class Game{
     private void battleFinishCheck() {
         if (playerOne.getHp() <= 0 || playerTwo.getHp() <= 0) {
             state = GameState.FINISHED;
+        } else {
+            state = GameState.PREPARE;
         }
     }
 
@@ -250,10 +247,23 @@ public class Game{
     private void refeashGold() {
         if (playerOne.getGold() < 50) {
             int extraGold = playerOne.getGold() / 10 * 2;
+            LOG.info(String.format("###### 玩家 %s 本轮游戏获得 %d 金币 ######", playerOne.getName(), extraGold));
             playerOne.setGold(playerOne.getGold() + extraGold);
         } else {
+            LOG.info(String.format("###### 玩家 %s 本轮游戏获得 10 金币 ######", playerOne.getName()));
             playerOne.setGold(playerOne.getGold() + 10);
         }
+        LOG.info(String.format("###### 玩家 %s 当前总金币数： %d ######", playerOne.getName(), playerOne.getGold()));
+
+        if (playerTwo.getGold() < 50) {
+            int extraGold = playerTwo.getGold() / 10 * 2;
+            LOG.info(String.format("###### 玩家 %s 本轮游戏获得 %d 金币 ######", playerTwo.getName(), extraGold));
+            playerTwo.setGold(playerTwo.getGold() + extraGold);
+        } else {
+            LOG.info(String.format("###### 玩家 %s 本轮游戏获得 10 金币 ######", playerTwo.getName()));
+            playerTwo.setGold(playerTwo.getGold() + 10);
+        }
+        LOG.info(String.format("###### 玩家 %s 当前总金币数： %d ######", playerOne.getName(), playerTwo.getGold()));
     }
 
     //双方玩家战场上卡牌的战斗处理整体逻辑
@@ -293,10 +303,10 @@ public class Game{
                 }
             }
         }
+        LOG.info("###### 回合 " + this.rounds + " 计算结束 开始结算过程 ######");
         battleResult();
         refeashGold();
         battleFinishCheck();
-        canFight = false;
     }
 
     //获取玩家手牌
@@ -354,14 +364,6 @@ public class Game{
         this.playerTwo = playerTwo;
     }
 
-    public boolean isCanFight() {
-        return canFight;
-    }
-
-    public void setCanFight(boolean canFight) {
-        this.canFight = canFight;
-    }
-
     public int getTotalTime() {
         return totalTime;
     }
@@ -402,14 +404,6 @@ public class Game{
         this.prepareTime = prepareTime;
     }
 
-    public int getBattleTime() {
-        return battleTime;
-    }
-
-    public void setBattleTime(int battleTime) {
-        this.battleTime = battleTime;
-    }
-
     public Date getCalEndDT() {
         return calEndDT;
     }
@@ -417,11 +411,5 @@ public class Game{
     public void setCalEndDT(Date calEndDT) {
         this.calEndDT = calEndDT;
     }
-
-    public int getLastTime() {
-        // PLAYER_DEFAULT_PREPARETIME -（当前系统时间-calEndDT）
-        return lastTime;
-    }
-
 
 }
