@@ -63,6 +63,7 @@ public class Game{
     public void calcLastTime() {
         if (this.calEndDT != null) {
             this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (this.calEndDT.getTime() - new Date().getTime()));
+            this.prepareTime = this.lastTime;
         }
     }
 
