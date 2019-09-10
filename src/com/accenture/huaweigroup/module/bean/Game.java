@@ -50,9 +50,19 @@ public class Game{
     public Player getPlayer(int playerId) {
         if (playerOne.getId() == playerId) {
             return playerOne;
-        } else {
+        } else if (playerTwo.getId() == playerId) {
             return playerTwo;
         }
+        return null;
+    }
+
+    public Player getOtherPlayer(int playerId) {
+        if (playerOne.getId() == playerId) {
+            return playerTwo;
+        } else if (playerTwo.getId() == playerId) {
+            return playerOne;
+        }
+        return null;
     }
 
     public void calcLastTime() {
@@ -60,6 +70,11 @@ public class Game{
             this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (new Date().getTime() - this.calEndDT.getTime()));
             this.prepareTime = this.lastTime;
         }
+    }
+
+    public void cacheBattle() {
+        playerOne.setCacheBattleCards(playerOne.getBattleCards());
+        playerTwo.setCacheBattleCards(playerTwo.getBattleCards());
     }
 
     /**

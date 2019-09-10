@@ -16,8 +16,8 @@ public class Player {
     private int gold = PLAYER_INIT_GOLD;
     private int winCount = 0;
 
-
     private ArrayList<Chess> handCards = new ArrayList<>();
+    private ArrayList<Chess> cacheBattleCards = new ArrayList<>();
     private ArrayList<Chess> battleCards = new ArrayList<>();
     private ArrayList<Chess> cardInventory = new ArrayList<>();
 
@@ -107,5 +107,13 @@ public class Player {
 
     public void setCardInventory(ArrayList<Chess> cardInventory) {
         this.cardInventory = cardInventory;
+    }
+
+    public ArrayList<Chess> getCacheBattleCards() {
+        return cacheBattleCards;
+    }
+
+    public void setCacheBattleCards(ArrayList<Chess> cacheBattleCards) {
+        this.cacheBattleCards = cacheBattleCards;
     }
 }

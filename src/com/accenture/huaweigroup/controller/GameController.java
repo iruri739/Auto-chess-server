@@ -67,9 +67,7 @@ public class GameController {
     {
         try {
             return gameService.changePlayerInventory(gameId, playerId);
-        } catch (NoGameException e) {
-            e.printStackTrace();
-        } catch (NoPlayerException e) {
+        } catch (NoGameException | NoPlayerException e) {
             e.printStackTrace();
         }
         return null;
@@ -86,18 +84,19 @@ public class GameController {
         return false;
     }
 
-    @PostMapping("/downloadBattleData")
-    public PlayerBattleData sendBattleData(String gameId) {
+    @ApiOperation(value = "对方战场数据获取接口", notes = "向服务器发送自己的ID 获取对方的战场数据", httpMethod = "GET")
+    @PostMapping("/requestBattleData")
+    public ArrayList<Chess> requestBattleData(@RequestParam("playerId") int playerId) {
         try {
-            return gameService.sendBattleData(gameId);
-        } catch (Exception e) {
+            return gameService.sendCacheData(playerId);
+        } catch (NoGameException | NoPlayerException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @ApiOperation(value = "战场数据传输接口", notes = "向服务器发送json对象，返回服务器最新状态的json对象", httpMethod = "POST")
-    @PostMapping("/battleDataApi")
+    @PostMapping("/sendBattleData")
     public boolean sendBattleData(@RequestBody UpdateGameData data) {
         try {
             return gameService.battleDataApi(data);
@@ -106,17 +105,5 @@ public class GameController {
         }
         return false;
     }
-
-    //    @ApiOperation(value = "进入准备阶段检测", notes = "检测玩家是否准备开启战斗", httpMethod = "GET")
-//    @GetMapping("/gamePrepareCheck")
-//    public String gameCircleCheck(@RequestParam("gameId") String gameId,@RequestParam("playerId") int playerId) {
-//        return gameService.gameGoPrepareCheck(gameId, playerId);
-//    }
-
-//    @ApiOperation(value = "进入战斗阶段检测", notes = "检测玩家是否可以进入战斗阶段", httpMethod = "GET")
-//    @GetMapping("/gameBattleCheck")
-//    public boolean gameBattleCheck(@RequestParam("gameId") String gameId, @RequestParam("playerId") int playerId) {
-//        return gameService.gameBattleCheck(gameId, playerId);
-//    }
 
 }

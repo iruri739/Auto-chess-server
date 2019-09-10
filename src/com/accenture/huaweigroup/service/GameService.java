@@ -116,16 +116,16 @@ public class GameService {
      * @return
      * @throws Exception
      */
-    public PlayerBattleData sendBattleData(String gameId) throws Exception {
-        Game game = ResManager.findGameById(gameId);
-        PlayerBattleData data = new PlayerBattleData();
-        data.setPlayerOneId(game.getPlayerOne().getId());
-        data.setPlayerOneBattleCards(game.getPlayerOne().getBattleCards());
-        data.setPlayerTwoId(game.getPlayerTwo().getId());
-        data.setPlayerTwoBattleCards(game.getPlayerTwo().getBattleCards());
-        LOG.info(String.format("###### 返回游戏 %s 的数据对象 ######", game.getId()));
-        return data;
-    }
+//    public PlayerBattleData sendBattleData(String gameId) throws Exception {
+//        Game game = ResManager.findGameById(gameId);
+//        PlayerBattleData data = new PlayerBattleData();
+//        data.setPlayerOneId(game.getPlayerOne().getId());
+//        data.setPlayerOneBattleCards(game.getPlayerOne().getBattleCards());
+//        data.setPlayerTwoId(game.getPlayerTwo().getId());
+//        data.setPlayerTwoBattleCards(game.getPlayerTwo().getBattleCards());
+//        LOG.info(String.format("###### 返回游戏 %s 的数据对象 ######", game.getId()));
+//        return data;
+//    }
 
     /**
      * UpdateGameData包含游戏id、玩家id、战场的卡牌id列表
@@ -141,6 +141,18 @@ public class GameService {
         }
         game.setPlayerBattleCards(data.getPlayerId(),(ArrayList<Chess>) data.getCards());
         return true;
+    }
+
+    public ArrayList<Chess> sendCacheData(int playerId) throws NoGameException,NoPlayerException {
+        Game game = ResManager.findGameByPlayer(playerId);
+        if (game == null) {
+            throw new NoGameException("玩家 " + playerId + " 所在游戏不存在！");
+        }
+        Player player = game.getOtherPlayer(playerId);
+        if (player == null) {
+            throw new NoPlayerException("玩家 " + playerId + " 不存在！");
+        }
+        return player.getCacheBattleCards();
     }
 
     /**
