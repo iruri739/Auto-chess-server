@@ -7,7 +7,7 @@ import java.util.List;
 public class UpdateGameData {
     private String gameId;
     private int playerId;
-    private List<Chess> Cards;
+    private List<Chess> cards;
 
     public String getGameId() {
         return gameId;
@@ -26,10 +26,10 @@ public class UpdateGameData {
     }
 
     public List<Chess> getCards() {
-        return Cards;
+        return cards;
     }
 
     public void setCards(List<Chess> cards) {
-        Cards = cards;
+        this.cards = cards;
     }
 }

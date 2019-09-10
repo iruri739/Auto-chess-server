@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,11 @@ public class UserController {
     public ArrayList<String> getOnlineUserList() {
         return userService.getOnlineUserList();
     }
+
+//    @PostMapping("/uploadAvatar")
+//    public boolean uploadAvatar(@RequestParam int userId, @RequestBody MultipartFile) {
+//
+//    }
 
     @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回0", httpMethod = "GET")
     @GetMapping("/login")

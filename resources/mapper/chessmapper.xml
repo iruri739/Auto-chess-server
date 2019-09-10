@@ -19,6 +19,13 @@
         select * from chess
     </select>
 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+        insert into chess(chess_name, chess_price, chess_level,
+            chess_hp, chess_attack, chess_type, chess_img) values (#{name}, #{price}, #{level}, #{hp}
+        , #{attack}, #{type, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
+        ,#{img})
+    </insert>
+
 
 </mapper>
 
