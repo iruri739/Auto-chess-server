@@ -9,6 +9,7 @@ public class BattleData {
     private String gameId;
     private int prepareTime;
     private int rounds;
+    private boolean isCached = false;
     private Player playerOneData;
     private Player playerTwoData;
 
@@ -21,14 +22,22 @@ public class BattleData {
         gameId = game.getId();
         rounds = game.getRounds();
         prepareTime = game.getPrepareTime();
-        playerOneData = game.getPlayerOne();
-        playerTwoData = game.getPlayerTwo();
+        playerOneData = new Player(game.getPlayerOne());
+        playerTwoData = new Player(game.getPlayerTwo());
     }
 
     @Override
     public String toString() {
         return String.format("游戏数据对象：\n{\n状态：%s\n游戏ID： %s\n" +
                 "游戏轮数： %d\n剩余准备时间： %d\n}\n", state, gameId, rounds, prepareTime);
+    }
+
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean cached) {
+        isCached = cached;
     }
 
     public GameState getState() {

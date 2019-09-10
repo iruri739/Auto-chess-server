@@ -86,10 +86,11 @@ public class GameController {
 
     @ApiOperation(value = "对方战场数据获取接口", notes = "向服务器发送自己的ID 获取对方的战场数据", httpMethod = "GET")
     @PostMapping("/requestBattleData")
-    public ArrayList<Chess> requestBattleData(@RequestParam("playerId") int playerId) {
+    public BattleData requestBattleData(@RequestParam("playerId") int playerId,
+                                              @RequestParam("round") int round) {
         try {
-            return gameService.sendCacheData(playerId);
-        } catch (NoGameException | NoPlayerException e) {
+            return gameService.sendCacheData(playerId, round);
+        } catch (NoGameException e) {
             e.printStackTrace();
         }
         return null;

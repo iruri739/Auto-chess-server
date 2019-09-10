@@ -27,8 +27,4 @@ public class TestController {
         return ResManager.findGameByPlayer(playerOneId).getId();
     }
 
-    @GetMapping("/randCards")
-    public ArrayList<Chess> getChess(@RequestParam("gameId") String gameId,@RequestParam("playerId") int playerId) {
-        return gameService.changePlayerInventory(gameId, playerId);
-    }
 }

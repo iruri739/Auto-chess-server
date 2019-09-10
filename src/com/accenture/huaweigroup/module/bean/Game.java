@@ -35,6 +35,7 @@ public class Game{
     private GameState state = GameState.CREATED;
     private Player playerOne = new Player();
     private Player playerTwo = new Player();
+    private ConcurrentHashMap<Integer, BattleData> cacheMap = new ConcurrentHashMap<>();
 
     public Game() {
         super();
@@ -69,12 +70,25 @@ public class Game{
         if (this.calEndDT != null) {
             this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (new Date().getTime() - this.calEndDT.getTime()));
             this.prepareTime = this.lastTime;
+            LOG.info(String.format("###### 游戏 %s 剩余准备时间： %d", this.prepareTime));
         }
     }
 
+    //将本轮游戏数据缓存成数据对象
     public void cacheBattle() {
-        playerOne.setCacheBattleCards(playerOne.getBattleCards());
-        playerTwo.setCacheBattleCards(playerTwo.getBattleCards());
+        cacheMap.put(rounds, new BattleData(this));
+    }
+
+    //根据轮数获得对应游戏数据对象
+    public BattleData getCacheBattle(int round) {
+        BattleData data = cacheMap.get(round);
+        if (data == null) {
+            data = new BattleData();
+            data.setCached(false);
+        } else if (data != null) {
+            data.setCached(true);
+        }
+        return data;
     }
 
     /**
@@ -243,8 +257,10 @@ public class Game{
      */
     private void battleFinishCheck() {
         if (playerOne.getHp() <= 0 || playerTwo.getHp() <= 0) {
+            LOG.info(String.format("###### 游戏 %s 已结束 切换到结束状态 ######", this.id));
             state = GameState.FINISHED;
         } else {
+            LOG.info(String.format("###### 游戏 %s 未结束 切换到准备状态 ######", this.id));
             state = GameState.PREPARE;
         }
     }
@@ -318,7 +334,7 @@ public class Game{
                 }
             }
         }
-        LOG.info("###### 回合 " + this.rounds + " 计算结束 开始结算过程 ######");
+        LOG.info(String.format("###### 游戏 %s 回合 %d 计算结束 开始结算过程 ######", this.id, this.rounds));
         battleResult();
         refeashGold();
         battleFinishCheck();

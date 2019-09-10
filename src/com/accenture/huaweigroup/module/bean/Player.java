@@ -17,7 +17,6 @@ public class Player {
     private int winCount = 0;
 
     private ArrayList<Chess> handCards = new ArrayList<>();
-    private ArrayList<Chess> cacheBattleCards = new ArrayList<>();
     private ArrayList<Chess> battleCards = new ArrayList<>();
     private ArrayList<Chess> cardInventory = new ArrayList<>();
 
@@ -43,6 +42,26 @@ public class Player {
     public Player(int id) {
         super();
         this.id = id;
+    }
+
+    public Player(Player player) {
+        this.id = player.id;
+        this.name = player.name;
+        this.hp = player.hp;
+        this.gold = player.gold;
+        this.winCount = player.winCount;
+        ArrayList<Chess> cacheList = player.handCards;
+        for (Chess c : cacheList) {
+            this.handCards.add(new Chess(c));
+        }
+        cacheList = player.battleCards;
+        for (Chess c : cacheList) {
+            this.battleCards.add(new Chess(c));
+        }
+        cacheList = player.cardInventory;
+        for (Chess c : cacheList) {
+            this.cardInventory.add(new Chess(c));
+        }
     }
 
     public int getId() {
@@ -109,11 +128,4 @@ public class Player {
         this.cardInventory = cardInventory;
     }
 
-    public ArrayList<Chess> getCacheBattleCards() {
-        return cacheBattleCards;
-    }
-
-    public void setCacheBattleCards(ArrayList<Chess> cacheBattleCards) {
-        this.cacheBattleCards = cacheBattleCards;
-    }
 }

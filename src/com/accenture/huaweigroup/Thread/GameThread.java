@@ -25,7 +25,9 @@ public class GameThread implements Runnable {
                 Thread.sleep(Game.PLAYER_DEFAULT_PREPARETIME);
                 //通过参数gameId从全局map中获取游戏数据
                 Game game = ResManager.findGameById(this.gameId);
+                LOG.info(String.format("###### 游戏 %s 开始存储缓存数据 ######", gameId));
                 game.cacheBattle();
+                LOG.info(String.format("###### 游戏 %s 存储缓存数据完成 ######", gameId));
                 LOG.info(String.format("###### 游戏 %s 开始战斗计算 ######", gameId));
                 game.fight();
                 LOG.info(String.format("###### 游戏 %s 战斗计算结束 ######", gameId));

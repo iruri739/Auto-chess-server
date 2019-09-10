@@ -84,7 +84,6 @@ public class GameService {
         GameThreadService.run(newGame.getId());
     }
 
-
     /**
      * 添加玩家新购入的卡牌进入到手牌中
      *
@@ -104,28 +103,10 @@ public class GameService {
             player.setGold(player.getGold() - chess.getPrice());
         }
         player.getHandCards().addAll(newCards);
-        LOG.info(String.format("######游戏%s 玩家 %s 添加新卡牌 ######", game.getId(), player.getName()));
+        LOG.info(String.format("###### 游戏 %s 玩家 %s 添加新手牌 ######", game.getId(), player.getName()));
         LOG.info(ChessManager.formatShowChessList(newCards));
         return true;
     }
-
-    /**
-     * 返回指定游戏id的当前游戏数据对象
-     *
-     * @param gameId
-     * @return
-     * @throws Exception
-     */
-//    public PlayerBattleData sendBattleData(String gameId) throws Exception {
-//        Game game = ResManager.findGameById(gameId);
-//        PlayerBattleData data = new PlayerBattleData();
-//        data.setPlayerOneId(game.getPlayerOne().getId());
-//        data.setPlayerOneBattleCards(game.getPlayerOne().getBattleCards());
-//        data.setPlayerTwoId(game.getPlayerTwo().getId());
-//        data.setPlayerTwoBattleCards(game.getPlayerTwo().getBattleCards());
-//        LOG.info(String.format("###### 返回游戏 %s 的数据对象 ######", game.getId()));
-//        return data;
-//    }
 
     /**
      * UpdateGameData包含游戏id、玩家id、战场的卡牌id列表
@@ -140,19 +121,49 @@ public class GameService {
             data.setCards(new ArrayList<>());
         }
         game.setPlayerBattleCards(data.getPlayerId(),(ArrayList<Chess>) data.getCards());
+        LOG.info(String.format("###### 游戏 %s 玩家 %d 上传战场数据 ######", data.getGameId(), data.getPlayerId()));
+        ChessManager.formatShowChessList(data.getCards());
         return true;
     }
 
-    public ArrayList<Chess> sendCacheData(int playerId) throws NoGameException,NoPlayerException {
+    /**
+     * 根据玩家ID，游戏轮数发送缓存游戏数据对象
+     *
+     * @param playerId 玩家ID
+     * @param round 游戏轮次
+     * @return 返回指定轮次的数据对象
+     * @throws NoGameException
+     */
+    public BattleData sendCacheData(int playerId, int round) throws NoGameException {
         Game game = ResManager.findGameByPlayer(playerId);
         if (game == null) {
             throw new NoGameException("玩家 " + playerId + " 所在游戏不存在！");
         }
-        Player player = game.getOtherPlayer(playerId);
-        if (player == null) {
-            throw new NoPlayerException("玩家 " + playerId + " 不存在！");
+        BattleData data = game.getCacheBattle(round);
+        return data;
+    }
+
+    /**
+     * 根据玩家ID返回玩家所在游戏的游戏数据对象
+     *
+     * @param playerId
+     * @return
+     */
+    public BattleData initRounds(int playerId) throws NoGameException {
+        LOG.info(String.format("###### 玩家 %s 请求获取游戏数据对象 ######"));
+        Game game = ResManager.findGameByPlayer(playerId);
+        if (game == null) {
+            throw new NoGameException("玩家" + playerId + "所在游戏不存在！");
         }
-        return player.getCacheBattleCards();
+        ResManager.changeUserState(playerId, true);
+        if (game.getState() == GameState.PREPARE) {
+            game.calcLastTime();
+        }
+        game.getPlayerOne().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
+        game.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
+        BattleData data = new BattleData(game);
+        LOG.info(data.toString());
+        return data;
     }
 
     /**
@@ -181,27 +192,6 @@ public class GameService {
         }
         LOG.info(String.format("###### 玩家 %s 金币不足以刷新待选区卡牌！！！ ######", player.getName()));
         return null;
-    }
-
-    /**
-     * 根据玩家ID返回玩家所在游戏的游戏数据对象
-     *
-     * @param playerId
-     * @return
-     */
-    public BattleData initRounds(int playerId) throws NoGameException {
-        LOG.info(String.format("###### 玩家 %s 请求"));
-        Game game = ResManager.findGameByPlayer(playerId);
-        if (game == null) {
-            throw new NoGameException("玩家" + playerId + "所在游戏不存在！");
-        }
-        ResManager.changeUserState(playerId, true);
-        game.calcLastTime();
-        game.getPlayerOne().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
-        game.getPlayerTwo().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
-        BattleData data = new BattleData(game);
-        LOG.info(data.toString());
-        return data;
     }
 
 }
