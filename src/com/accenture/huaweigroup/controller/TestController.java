@@ -1,6 +1,7 @@
 package com.accenture.huaweigroup.controller;
 
 import com.accenture.huaweigroup.business.ResManager;
+import com.accenture.huaweigroup.module.bean.Game;
 import com.accenture.huaweigroup.module.entity.Chess;
 import com.accenture.huaweigroup.service.GameService;
 import io.swagger.annotations.Api;
@@ -25,6 +26,13 @@ public class TestController {
                                  @RequestParam("playerTwoId") int playerTwoId) {
         gameService.createGame(playerOneId, playerTwoId);
         return ResManager.findGameByPlayer(playerOneId).getId();
+    }
+
+    @GetMapping("/changeBattle")
+    public String testChangeBattleCards(@RequestParam("playerId") int playerOneId) {
+        Game game = ResManager.findGameByPlayer(playerOneId);
+        game.getPlayer(playerOneId).
+        return "true";
     }
 
 }
