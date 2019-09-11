@@ -42,25 +42,25 @@ public class UserController {
 
     @ApiOperation(value = "用户登录", notes = "验证用户信息，登陆成功返回ID，否则返回0", httpMethod = "GET")
     @GetMapping("/login")
-    public int loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
+    public UserToken loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
 //        UserToken userToken = new UserToken();
 //        userToken.setState(false);
-        int userId = 0;
+        UserToken userToken;
         try {
-            userId = userService.loginCheck(userName, userPwd);
-            if (userId != 0) {
+            userToken = userService.loginCheck(userName, userPwd);
+            if (userToken!=null) {
                 LOG.info("###### 用户 " + userName + " 登录成功 ######");
 
 //                LOG.info("###### 用户token ######");
 //                LOG.info(userToken.getToken());
 //                return userToken;
-                return userId;
+                return userToken;
             }
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("###### 用户 " + userName + " 登录发生错误！！！ ######");
         }
-        return 0;
+        return null;
     }
 
     @ApiOperation(value = "用户注册", notes = "注册用户信息，注册成功返回ID，否则返回0，发生错误状态码400,500", httpMethod = "POST")

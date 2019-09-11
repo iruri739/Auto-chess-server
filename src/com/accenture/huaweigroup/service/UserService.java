@@ -39,19 +39,20 @@ public class UserService {
      * @return 返回包含验证状态、用户id、用户token的json对象
      * @throws Exception
      */
-    public int loginCheck(String userName, String userPwd) throws Exception {
+    public UserToken loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
         String token;
         if (user != null) {
             if (user.getPwd().equals(DigestUtils.md5DigestAsHex(userPwd.getBytes()))) {
-//                token = userManager.addUserToList(user.getId());
-//                return new UserToken(true ,user.getId(), token);
+                token = userManager.addUserToList(user.getId());
+                LOG.info("123456");
                 ResManager.addUserToList(user.getId(), true);
-                return user.getId();
+                LOG.info("123456");
+                return new UserToken(true ,user.getId(), token);
             }
         }
 //        return new UserToken(false, 0, null);
-        return 0;
+        return null;
     }
 
     //用户注册，首先检查注册用户名是否已经存在
