@@ -299,7 +299,7 @@ public class Game{
             LOG.info(String.format("###### 玩家 %s 本轮游戏获得 10 金币 ######", playerTwo.getName()));
             playerTwo.setGold(playerTwo.getGold() + 10);
         }
-        LOG.info(String.format("###### 玩家 %s 当前总金币数： %d ######", playerOne.getName(), playerTwo.getGold()));
+        LOG.info(String.format("###### 玩家 %s 当前总金币数： %d ######", playerTwo.getName(), playerTwo.getGold()));
     }
 
     //双方玩家战场上卡牌的战斗处理整体逻辑
