@@ -38,7 +38,7 @@ public class GameService {
      * @param playerId 玩家id
      * @return 成功返回 ture 否则返回 false
      */
-    public boolean matchGame(int playerId) throws Exception {
+    public boolean matchGame(int playerId) throws NoPlayerException {
         ResManager.showMatchList();
         if (ResManager.findGameByPlayer(playerId) != null) {
             return true;

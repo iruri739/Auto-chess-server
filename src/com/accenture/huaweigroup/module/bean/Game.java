@@ -68,7 +68,7 @@ public class Game{
 
     public void calcLastTime() {
         if (this.calEndDT != null) {
-            this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (new Date().getTime() - this.calEndDT.getTime()));
+            this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (new Date().getTime() - this.calEndDT.getTime()) / 1000);
             this.prepareTime = this.lastTime;
             LOG.info(String.format("###### 游戏 %s 剩余准备时间： %d", this.id, this.prepareTime));
         }
@@ -219,32 +219,36 @@ public class Game{
      * 战斗结算
      */
     private void battleResult() {
+        int count1 = 0;
+        for (Chess c : playerTwo.getBattleCards()) {
+            if (c.isAlive()) {
+                count1++;
+            }
+        }
+        int cost1 = count1 * 2;
+        LOG.info(String.format("###### 玩家 %s 本轮扣除血量： %d", playerOne.getName(), cost1));
+        playerOne.setHp(playerOne.getHp() - cost1);
+
+        int count2 = 0;
+        for (Chess c : playerOne.getBattleCards()) {
+            if (c.isAlive()) {
+                count2++;
+            }
+        }
+        int cost2 = count2 * 2;
+        LOG.info(String.format("###### 玩家 %s 本轮扣除血量： %d", playerTwo.getName(), cost2));
+        playerTwo.setHp(playerTwo.getHp() - cost2);
+
         if (noCardsToBattle(1)) {
             //玩家1场上已经没有存活卡牌
-            //则清点玩家2场上卡牌数量
-            //根据数量扣除玩家2  卡牌数量*2 的血量
-            //同时将玩家2连胜标识+1 将玩家1连胜标识清零
-            int count = 0;
-            for (Chess c : playerTwo.getBattleCards()) {
-                if (c.isAlive()) {
-                    count++;
-                }
-            }
-            playerOne.setHp(playerOne.getHp() - count * 2);
-
+            //将玩家2连胜标识+1 将玩家1连胜标识清零
             if (playerOne.getWinCount() != 0) {
                 playerOne.setWinCount(0);
             }
             playerTwo.setWinCount(playerTwo.getWinCount() + 1);
-        } else if (noCardsToBattle(2)) {
+        }
+        if (noCardsToBattle(2)) {
             //玩家2场上没有存活卡牌时处理逻辑与玩家1类似
-            int count = 0;
-            for (Chess c : playerOne.getBattleCards()) {
-                if (c.isAlive()) {
-                    count++;
-                }
-            }
-            playerTwo.setHp(playerTwo.getHp() - count * 2);
             if (playerTwo.getWinCount() != 0) {
                 playerTwo.setWinCount(0);
             }
@@ -270,6 +274,7 @@ public class Game{
         } else {
             LOG.info(String.format("###### 游戏 %s 未结束 切换到准备状态 ######", this.id));
             state = GameState.PREPARE;
+            rounds++;
         }
     }
 

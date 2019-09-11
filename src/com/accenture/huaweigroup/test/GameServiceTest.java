@@ -1,5 +1,3 @@
-package com.accenture.huaweigroup.test.service;
-
 import com.accenture.huaweigroup.service.GameService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

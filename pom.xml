@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.accenture.huaweigroup</groupId>
     <artifactId>autochess</artifactId>
-    <version>0.1.5-SNAPSHOT</version>
+    <version>0.5.7-SNAPSHOT</version>
     <name>autochess</name>
     <description>Server project for autoChess Game</description>
 
@@ -102,6 +102,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
+            <version>2.1.7.RELEASE</version>
         </dependency>
 
     </dependencies>
@@ -111,6 +112,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.accenture.huaweigroup.Application</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

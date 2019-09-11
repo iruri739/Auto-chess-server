@@ -1,5 +1,3 @@
-package test;
-
 import com.accenture.huaweigroup.Application;
 import com.accenture.huaweigroup.module.entity.Chess;
 import com.accenture.huaweigroup.service.ChessService;
