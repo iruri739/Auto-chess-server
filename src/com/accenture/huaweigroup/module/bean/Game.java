@@ -129,14 +129,14 @@ public class Game{
         int finder = pos;
         while (finder >= 0) {
             finder--;
-            if (cards.get(finder).isAlive()) {
+            if (finder >= 0 && cards.get(finder).isAlive()) {
                 return finder;
             }
         }
         finder = pos;
         while (finder < cards.size()) {
             finder++;
-            if (cards.get(finder).isAlive()) {
+            if (finder < cards.size() && cards.get(finder).isAlive()) {
                 return finder;
             }
         }
@@ -231,6 +231,7 @@ public class Game{
                 }
             }
             playerOne.setHp(playerOne.getHp() - count * 2);
+
             if (playerOne.getWinCount() != 0) {
                 playerOne.setWinCount(0);
             }
@@ -249,6 +250,8 @@ public class Game{
             }
             playerOne.setWinCount(playerOne.getWinCount() + 1);
         }
+        LOG.info(String.format("###### 玩家 %s 剩余血量： %d", playerOne.getName(),playerOne.getHp()));
+        LOG.info(String.format("###### 玩家 %s 剩余血量： %d", playerTwo.getName(),playerTwo.getHp()));
     }
 
     /**
@@ -309,7 +312,7 @@ public class Game{
         ArrayList<Chess> chessTwo = playerTwo.getBattleCards();
         Random random = new Random();
         //任何一方场上无存货卡牌则停止循环
-        while (noCardsToBattle(1) && noCardsToBattle(2)) {
+        while (!noCardsToBattle(1) && !noCardsToBattle(2)) {
             //如果玩家1的战场牌数比玩家2的多，则以玩家1的牌数为循环基准
             //否则相反
             if (chessOne.size() >= chessTwo.size()) {
