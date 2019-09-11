@@ -1,4 +1,4 @@
-package interceptor;
+package com.accenture.huaweigroup.interceptor;
 
 import com.accenture.huaweigroup.business.UserManager;
 import org.slf4j.Logger;
