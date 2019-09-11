@@ -269,7 +269,7 @@ public class Game{
             newList.add(newChess);
         }
         playerOne.setBattleCards(newList);
-        newList.clear();
+        newList = new ArrayList<>();
         for (Chess c : playerTwo.getBattleCards()) {
             Chess newChess = chessManager.getChess(c.getId());
             newList.add(newChess);
