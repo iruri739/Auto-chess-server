@@ -4,6 +4,7 @@ import com.accenture.huaweigroup.business.ResManager;
 import com.accenture.huaweigroup.module.bean.Game;
 import com.accenture.huaweigroup.module.entity.Chess;
 import com.accenture.huaweigroup.service.GameService;
+import com.accenture.huaweigroup.service.GameThreadService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,12 @@ public class TestController {
                                  @RequestParam("playerTwoId") int playerTwoId) {
         gameService.createGame(playerOneId, playerTwoId);
         return ResManager.findGameByPlayer(playerOneId).getId();
+    }
+
+    @GetMapping("/closeGame")
+    public void closeGame() {
+        GameThreadService.clear();
+        ResManager.clearAllGame();
     }
 
     @GetMapping("/changeBattle")

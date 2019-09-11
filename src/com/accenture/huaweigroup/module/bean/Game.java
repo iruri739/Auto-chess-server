@@ -1,8 +1,10 @@
 package com.accenture.huaweigroup.module.bean;
 
+import com.accenture.huaweigroup.business.ChessManager;
 import com.accenture.huaweigroup.module.entity.Chess;
 import com.accenture.huaweigroup.module.bean.GameState;
 import com.accenture.huaweigroup.service.ChessService;
+import com.accenture.huaweigroup.service.GameThreadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class Game{
     public static final int PLAYER_DEFAULT_PREPARETIME = 30;
 
     private static final Logger LOG = LoggerFactory.getLogger(Game.class);
+    @Autowired
+    private ChessManager chessManager;
 
     //计算战斗结果的系统时间
     private Date calEndDT = null;
@@ -258,6 +262,21 @@ public class Game{
         LOG.info(String.format("###### 玩家 %s 剩余血量： %d", playerTwo.getName(),playerTwo.getHp()));
     }
 
+    private void resetBattle() {
+        ArrayList<Chess> newList = new ArrayList<>();
+        for (Chess c : playerOne.getBattleCards()) {
+            Chess newChess = chessManager.getChess(c.getId());
+            newList.add(newChess);
+        }
+        playerOne.setBattleCards(newList);
+        newList.clear();
+        for (Chess c : playerTwo.getBattleCards()) {
+            Chess newChess = chessManager.getChess(c.getId());
+            newList.add(newChess);
+        }
+        playerTwo.setBattleCards(newList);
+    }
+
     /**
      * 整场游戏结束检测
      * 任一玩家血量降至0以下则该局游戏结束
@@ -355,6 +374,7 @@ public class Game{
         LOG.info(String.format("###### 游戏 %s 回合 %d 计算结束 开始结算过程 ######", this.id, this.rounds));
         battleResult();
         refeashGold();
+        resetBattle();
         battleFinishCheck();
     }
 

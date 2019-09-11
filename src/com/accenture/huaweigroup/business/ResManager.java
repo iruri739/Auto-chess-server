@@ -128,6 +128,10 @@ public class ResManager {
         return null;
     }
 
+    public static void clearAllGame() {
+        gameList.clear();
+    }
+
     public static Game findGameById(String gameId) {
         return gameList.get(gameId);
     }

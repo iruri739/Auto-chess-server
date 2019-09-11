@@ -12,4 +12,8 @@ public class GameThreadService {
     public static void run(String gameId){
         exec.execute(new GameThread(gameId));
     }
+
+    public static void clear() {
+        exec.shutdown();
+    }
 }

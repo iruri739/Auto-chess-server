@@ -157,6 +157,7 @@ public class GameService {
         }
         ResManager.changeUserState(playerId, true);
         if (game.getState() == GameState.PREPARE) {
+            //game.setCalEndDT(new Date());
             game.calcLastTime();
         }
         game.getPlayerOne().setCardInventory((ArrayList<Chess>) chessManager.getRandomChess());
