@@ -17,7 +17,7 @@ public class UserManager implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserManager.class);
     private static final String USER_DB = "USER_DB";
-    private static final int TOKEN_EXPIRE_TIME = 5 * 60;
+    private static final long TOKEN_EXPIRE_TIME = 5 * 60L;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -33,8 +33,8 @@ public class UserManager implements InitializingBean {
         String token = TokenGenerator.generate(userId);
         redisTemplate.opsForHash().put(USER_DB, userId, token);
         redisTemplate.opsForHash().put(USER_DB, token, userId);
-        redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, userId), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
-        redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, token), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
+        redisTemplate.expire(userId, TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
+        redisTemplate.expire(token, TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
         return token;
     }
 

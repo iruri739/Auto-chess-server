@@ -10,10 +10,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new LoginInterceptor())
-//                .addPathPatterns("/**/**")
-//                .excludePathPatterns("/user/login", "/user/register",
-//                        "/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
-//                        "//swagger-resources/**");
+        registry.addInterceptor(new LoginInterceptor())
+                .addPathPatterns("/**/**")
+                .excludePathPatterns("/user/login", "/user/register",
+                        "/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
+                        "//swagger-resources/**");
     }
 }
