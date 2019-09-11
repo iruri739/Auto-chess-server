@@ -1,3 +1,4 @@
+package com.accenture.huaweigroup.test;
 import com.accenture.huaweigroup.Application;
 import com.accenture.huaweigroup.business.ChessManager;
 import org.junit.Test;
