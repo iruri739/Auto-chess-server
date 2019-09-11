@@ -88,7 +88,7 @@ public class ChessManager implements InitializingBean {
     public static String formatShowChessList(List<Chess> list) {
         StringBuilder builder = new StringBuilder();
         for (Chess c : list) {
-            builder.append(String.format("卡牌ID： %d 卡牌名： %s", c.getId(), c.getName()));
+            builder.append(String.format("卡牌ID： %d 卡牌名： %s\n", c.getId(), c.getName()));
         }
         return builder.toString();
     }

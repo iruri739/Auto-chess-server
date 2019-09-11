@@ -28,8 +28,11 @@ public class BattleData {
 
     @Override
     public String toString() {
-        return String.format("游戏数据对象：\n{\n状态：%s\n游戏ID： %s\n" +
-                "游戏轮数： %d\n剩余准备时间： %d\n}\n", state, gameId, rounds, prepareTime);
+        StringBuilder builder = new StringBuilder();
+        builder.append("游戏数据对象：\n");
+        builder.append(String.format("状态： %s 游戏ID： %s 游戏轮数： %d 剩余准备时间： %d\n",
+                state, gameId, rounds, prepareTime));
+        return builder.toString();
     }
 
     public boolean isCached() {

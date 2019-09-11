@@ -291,6 +291,9 @@ public class Game{
     private void refeashGold() {
         if (playerOne.getGold() < 50) {
             int extraGold = playerOne.getGold() / 10 * 2;
+            if (extraGold == 0) {
+                extraGold = 2;
+            }
             LOG.info(String.format("###### 玩家 %s 本轮游戏获得 %d 金币 ######", playerOne.getName(), extraGold));
             playerOne.setGold(playerOne.getGold() + extraGold);
         } else {
@@ -298,9 +301,11 @@ public class Game{
             playerOne.setGold(playerOne.getGold() + 10);
         }
         LOG.info(String.format("###### 玩家 %s 当前总金币数： %d ######", playerOne.getName(), playerOne.getGold()));
-
         if (playerTwo.getGold() < 50) {
             int extraGold = playerTwo.getGold() / 10 * 2;
+            if (extraGold == 0) {
+                extraGold = 2;
+            }
             LOG.info(String.format("###### 玩家 %s 本轮游戏获得 %d 金币 ######", playerTwo.getName(), extraGold));
             playerTwo.setGold(playerTwo.getGold() + extraGold);
         } else {
