@@ -259,6 +259,11 @@ public class Game{
         if (playerOne.getHp() <= 0 || playerTwo.getHp() <= 0) {
             LOG.info(String.format("###### 游戏 %s 已结束 切换到结束状态 ######", this.id));
             state = GameState.FINISHED;
+            if (playerOne.getHp() <= 0) {
+                LOG.info(String.format("###### 玩家 %s 获胜 ######", playerTwo.getName()));
+            } else {
+                LOG.info(String.format("###### 玩家 %s 获胜 ######", playerOne.getName()));
+            }
         } else {
             LOG.info(String.format("###### 游戏 %s 未结束 切换到准备状态 ######", this.id));
             state = GameState.PREPARE;
