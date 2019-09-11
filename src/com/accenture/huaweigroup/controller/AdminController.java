@@ -37,11 +37,24 @@ public class AdminController {
     @GetMapping("/deleteCard")
     public void deleteCard(@RequestParam("chess_id") int chess_id)
     {
-        adminService.deleteChess(chess_id);    }
+        adminService.deleteChess(chess_id);
+    }
 
 
+    @ApiOperation(value = "查找卡牌", notes = "查找卡牌", httpMethod = "GET")
+    @GetMapping("/searchCard")
+    public List<Chess> searchCard(@RequestParam("chess_name") String chess_name)
+    {
+       return adminService.searchChess(chess_name);
+    }
 
 
+    @ApiOperation(value = "更新卡牌", notes = "更新卡牌", httpMethod = "POST")
+    @PostMapping("/updateCard")
+    public void updatechCard(@RequestBody Chess chess)
+    {
+        adminService.updatechCard(chess);
+    }
 
 
 

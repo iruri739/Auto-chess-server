@@ -1,4 +1,4 @@
-package interceptor;
+package com.accenture.huaweigroup.Interceptor;
 
 import com.accenture.huaweigroup.business.UserManager;
 import org.slf4j.Logger;
@@ -23,6 +23,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)  {
 //        UserManager userManager;
         String userToken = request.getHeader("token");
+
         if (userToken == null || userToken.equals("")) {
             LOG.info("####Token为空！！！####");
 //            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -31,10 +32,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         LOG.info("####Token为####");
         LOG.info(userToken);
-        UserManager userManager1 = new UserManager();
+//        UserManager userManager1 = new UserManager();
 //       String isLogin = userManager1.userIsOnline(userToken);
-
-        String isLogin = userManager1.userIsOnline(userToken);
+        userManager.userIsOnline(userToken);
 
 //        if (isLogin) {
 //            return true;

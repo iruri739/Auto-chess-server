@@ -23,36 +23,44 @@ public class UserManager {
     private static final int TOKEN_EXPIRE_TIME = 5 * 60;
 
     @Autowired
-    private RedisTemplate redisTemplate;
-
-
-
+//    private RedisTemplate redisTemplate;
+    RedisTemplate redisTemplate;
 //
 //    @Override
 //    public void afterPropertiesSet() throws Exception {
 //
 //    }
 
-    public  String addUserToList(int userId) {
-        String token = TokenGenerator.generate(userId);
-        LOG.info(String.valueOf(userId));
-        LOG.info("######生成的Token为：########"+token);
-        LOG.info("aaaaaaa");
-        redisTemplate.opsForHash().put(USER_DB, userId, token);
+    public  String addUserToList(String token,int userId) {
+        LOG.info(token);
+        if(token==null) {
+            token = TokenGenerator.generate(userId);
 
-        redisTemplate.opsForHash().put(USER_DB, token, userId);
+            LOG.info(String.valueOf(userId));
+            LOG.info("######生成的Token为：########" + token);
+            LOG.info("aaaaaaa");
+            redisTemplate.opsForHash().put(USER_DB, userId, token);
 
-        LOG.info(redisTemplate.opsForHash().get(USER_DB,token).toString());
+            redisTemplate.opsForHash().put(USER_DB, token, userId);
 
-        LOG.info(redisTemplate.opsForHash().get(USER_DB,userId).toString());
+            LOG.info(redisTemplate.opsForHash().get(USER_DB, token).toString());
+
+            LOG.info(redisTemplate.opsForHash().get(USER_DB, userId).toString());
 //        LOG.info(a);
 
-        LOG.info(token);
-        LOG.info(redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, userId), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS).toString());
-        redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, userId), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
-        redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, token), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
-        LOG.info(redisTemplate.opsForHash().get(USER_DB,userId).toString());
-        return token;
+            LOG.info(token);
+            LOG.info(redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, userId), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS).toString());
+            redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, userId), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
+            redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, token), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
+            LOG.info(redisTemplate.opsForHash().get(USER_DB, userId).toString());
+            return token;
+        }
+        else
+        {
+            LOG.info("###TOK###");
+            LOG.info(redisTemplate.opsForHash().get(USER_DB, token).toString());
+            return "OK";
+        }
     }
 
     public boolean userIsOnline(int userId) {
@@ -66,9 +74,9 @@ public class UserManager {
 //        RedisTemplate redisTemplate = new RedisTemplate();
         LOG.info("###Token为：###"+token);
 
-        LOG.info(redisTemplate.opsForHash().get(USER_DB,token).toString());
+//        LOG.info(redisTemplate.opsForHash().get(USER_DB,token).toString());
 
-//        Jedis jedis = new Jedis("127.0.0.1", 6379);
+
         LOG.info(redisTemplate.opsForHash().get(USER_DB,token).toString());
         Object a = redisTemplate.opsForHash().get(USER_DB,token);
         if(a==null)
@@ -99,8 +107,11 @@ public class UserManager {
 
     public String Tokend(String token)
     {
+        LOG.info("###InTo!###");
+        String a = redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, token), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS).toString();
         LOG.info("####token####"+token);
-        LOG.info(redisTemplate.opsForHash().get(USER_DB,token).toString());
+        LOG.info(a);
+//        LOG.info(redisTemplate.expire(redisTemplate.opsForHash().get(USER_DB, token), TOKEN_EXPIRE_TIME, TimeUnit.SECONDS).toString());
         return "OK";
     }
 

@@ -43,4 +43,17 @@ public class AdminService{
         adminMapper.deleteCard(chess_id);
     }
 
+    public List<Chess> searchChess(String chess_name)
+    {
+
+        return chessMapper.searchChess(chess_name);
+    }
+
+    public void updatechCard(Chess chess)
+    {
+        adminMapper.updatechCard(chess);
+    }
+
+
+
 }

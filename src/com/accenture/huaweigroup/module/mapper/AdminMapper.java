@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface AdminMapper {
 
-    List<Chess> allChess();
+//    List<Chess> allChess();
 
     void insertChess_Land(Chess chess);
 
@@ -18,6 +18,10 @@ public interface AdminMapper {
     void insertChess_Sea(Chess chess);
 
     void deleteCard(int chess_id);
+
+    void updatechCard(Chess chess);
+
+
 
 
 }

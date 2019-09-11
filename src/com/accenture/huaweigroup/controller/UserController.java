@@ -45,7 +45,7 @@ public class UserController {
     public UserToken loginUser(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
 //        UserToken userToken = new UserToken();
 //        userToken.setState(false);
-        UserToken userToken;
+        UserToken userToken = new UserToken();
         try {
             userToken = userService.loginCheck(userName, userPwd);
             if (userToken!=null) {

@@ -31,4 +31,11 @@
     <delete id="deleteCard" parameterType="int">
         delete from chess where chess_id=#{chess_id}
     </delete>
+
+    <update id="updatechCard" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+       update  chess set chess_price=#{price},chess_level=#{level},chess_hp=#{hp},chess_attack=#{attack},chess_type=#{type} where chess_name=#{name}
+    </update>
+
+
+
 </mapper>

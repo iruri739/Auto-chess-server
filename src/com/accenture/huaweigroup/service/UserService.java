@@ -41,10 +41,10 @@ public class UserService {
      */
     public UserToken loginCheck(String userName, String userPwd) throws Exception {
         User user = userMapper.getUserByName(userName);
-        String token;
+        String token = null;
         if (user != null) {
             if (user.getPwd().equals(DigestUtils.md5DigestAsHex(userPwd.getBytes()))) {
-                token = userManager.addUserToList(user.getId());
+                token = userManager.addUserToList(token,user.getId());
                 LOG.info("123456");
                 ResManager.addUserToList(user.getId(), true);
                 LOG.info("123456");

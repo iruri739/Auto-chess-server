@@ -26,6 +26,10 @@
         ,#{img})
     </insert>
 
+    <select id="searchChess" parameterType="com.accenture.huaweigroup.module.entity.Chess" resultMap="getChessResultMap">
+        select * from chess where chess_name like CONCAT('%','${chess_name}','%' )
+    </select>
+
 
 </mapper>
 
