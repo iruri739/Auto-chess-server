@@ -1,5 +1,6 @@
 package com.accenture.huaweigroup.module.bean;
 
+import com.accenture.huaweigroup.business.ChessManager;
 import org.springframework.stereotype.Component;
 
 
@@ -32,6 +33,10 @@ public class BattleData {
         builder.append("游戏数据对象：\n");
         builder.append(String.format("状态： %s 游戏ID： %s 游戏轮数： %d 剩余准备时间： %d\n",
                 state, gameId, rounds, prepareTime));
+        builder.append("playerOne battleCards: \n");
+        builder.append(ChessManager.formatShowChessList(playerOneData.getBattleCards()));
+        builder.append("playerTwo battleCards: \n");
+        builder.append(ChessManager.formatShowChessList(playerTwoData.getBattleCards()));
         return builder.toString();
     }
 
