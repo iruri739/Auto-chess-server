@@ -264,17 +264,15 @@ public class Game{
 
     private void resetBattle() {
         ArrayList<Chess> newList = new ArrayList<>();
-        for (Chess c : playerOne.getBattleCards()) {
-            Chess newChess = chessManager.getChess(c.getId());
-            newList.add(newChess);
+        for (Chess c : cacheMap.get(rounds).getPlayerOneData().getBattleCards()) {
+            newList.add(new Chess(c));
         }
         playerOne.setBattleCards(newList);
-        newList = new ArrayList<>();
-        for (Chess c : playerTwo.getBattleCards()) {
-            Chess newChess = chessManager.getChess(c.getId());
-            newList.add(newChess);
+        ArrayList<Chess> newList2 = new ArrayList<>();
+        for (Chess c : cacheMap.get(rounds).getPlayerOneData().getBattleCards()) {
+            newList.add(new Chess(c));
         }
-        playerTwo.setBattleCards(newList);
+        playerTwo.setBattleCards(newList2);
     }
 
     /**
@@ -339,6 +337,7 @@ public class Game{
     //双方玩家战场上卡牌的战斗处理整体逻辑
     public void fight() {
         //获得双方战场卡牌
+        state = GameState.BATTLE;
         ArrayList<Chess> chessOne = playerOne.getBattleCards();
         ArrayList<Chess> chessTwo = playerTwo.getBattleCards();
         Random random = new Random();
