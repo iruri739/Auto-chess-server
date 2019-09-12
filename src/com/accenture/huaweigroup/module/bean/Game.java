@@ -292,8 +292,10 @@ public class Game{
             }
         } else {
             LOG.info(String.format("###### 游戏 %s 未结束 切换到准备状态 ######", this.id));
-            state = GameState.PREPARE;
+            setCalEndDT(new Date());
             rounds++;
+            state = GameState.PREPARE;
+
         }
     }
 

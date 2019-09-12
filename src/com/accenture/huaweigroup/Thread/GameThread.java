@@ -22,7 +22,7 @@ public class GameThread implements Runnable {
             while(true)
             {
                 LOG.info(String.format("###### 游戏 %s 开始计时 ######", gameId));
-                Thread.sleep((Game.PLAYER_DEFAULT_PREPARETIME + 15) * 1000);
+                Thread.sleep((Game.PLAYER_DEFAULT_PREPARETIME) * 1000);
                 //通过参数gameId从全局map中获取游戏数据
                 Game game = ResManager.findGameById(this.gameId);
                 LOG.info(String.format("###### 游戏 %s 开始存储缓存数据 ######", gameId));
@@ -36,7 +36,7 @@ public class GameThread implements Runnable {
                     break;
                 }
                 //更新game中战斗结束系统时间
-                game.setCalEndDT(new Date());
+
             }
         } catch (Exception e){
             e.printStackTrace();
