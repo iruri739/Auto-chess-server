@@ -269,7 +269,7 @@ public class Game{
         }
         playerOne.setBattleCards(newList);
         ArrayList<Chess> newList2 = new ArrayList<>();
-        for (Chess c : cacheMap.get(rounds).getPlayerOneData().getBattleCards()) {
+        for (Chess c : cacheMap.get(rounds).getPlayerTwoData().getBattleCards()) {
             newList.add(new Chess(c));
         }
         playerTwo.setBattleCards(newList2);

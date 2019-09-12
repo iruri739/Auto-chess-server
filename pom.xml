@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.accenture.huaweigroup</groupId>
     <artifactId>autochess</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.3-SNAPSHOT</version>
     <name>autochess</name>
     <description>Server project for autoChess Game</description>
 
