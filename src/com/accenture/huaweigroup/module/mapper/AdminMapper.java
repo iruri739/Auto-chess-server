@@ -19,7 +19,12 @@ public interface AdminMapper {
 
     void deleteCard(int chess_id);
 
-    void updatechCard(Chess chess);
+    void updatechCard_land(Chess chess);
+
+    void updatechCard_sea(Chess chess);
+
+    void updatechCard_air(Chess chess);
+
 
 
 

@@ -51,7 +51,18 @@ public class AdminService{
 
     public void updatechCard(Chess chess)
     {
-        adminMapper.updatechCard(chess);
+        if(chess.getType().equals("SEA"))
+        {
+            adminMapper.updatechCard_sea(chess);
+        }
+        else if(chess.getType().equals("LAND"))
+        {
+            adminMapper.updatechCard_land(chess);
+        }
+        else
+        {
+            adminMapper.updatechCard_air(chess);
+        }
     }
 
 

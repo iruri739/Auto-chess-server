@@ -32,8 +32,16 @@
         delete from chess where chess_id=#{chess_id}
     </delete>
 
-    <update id="updatechCard" parameterType="com.accenture.huaweigroup.module.entity.Chess">
-       update  chess set chess_price=#{price},chess_level=#{level},chess_hp=#{hp},chess_attack=#{attack},chess_type=#{type} where chess_name=#{name}
+    <update id="updatechCard_land" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+       update  chess set chess_price=#{price},chess_level=#{level},chess_hp=#{hp},chess_attack=#{attack},chess_type=0 where chess_name=#{name}
+    </update>
+
+    <update id="updatechCard_sea" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+       update  chess set chess_price=#{price},chess_level=#{level},chess_hp=#{hp},chess_attack=#{attack},chess_type=1 where chess_name=#{name}
+    </update>
+
+    <update id="updatechCard_air" parameterType="com.accenture.huaweigroup.module.entity.Chess">
+       update  chess set chess_price=#{price},chess_level=#{level},chess_hp=#{hp},chess_attack=#{attack},chess_type=2 where chess_name=#{name}
     </update>
 
 
