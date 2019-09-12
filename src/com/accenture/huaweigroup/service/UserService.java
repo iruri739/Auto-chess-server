@@ -127,7 +127,7 @@ public class UserService {
         List<Integer> onlineUser = ResManager.getOnlineUserList();
         for (int id : onlineUser) {
             User user = userMapper.getUserById(id);
-            list.add(user.getName());
+            list.add(String.format("%d %s", user.getId(), user.getName()));
         }
         return list;
     }
