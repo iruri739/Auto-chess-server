@@ -73,7 +73,7 @@ public class Game{
     public void calcLastTime() {
         if (this.calEndDT != null) {
             this.lastTime = (int) (PLAYER_DEFAULT_PREPARETIME - (new Date().getTime() - this.calEndDT.getTime()) / 1000);
-            this.prepareTime = this.lastTime;
+            this.prepareTime = this.lastTime - 1;
             LOG.info(String.format("###### 游戏 %s 剩余准备时间： %d", this.id, this.prepareTime));
         }
     }
