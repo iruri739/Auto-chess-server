@@ -264,12 +264,21 @@ public class Game{
 
     private void resetBattle() {
         ArrayList<Chess> newList = new ArrayList<>();
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println(cacheMap.get(rounds));
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         for (Chess c : cacheMap.get(rounds).getPlayerOneData().getBattleCards()) {
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println(c);
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             newList.add(new Chess(c));
         }
         playerOne.setBattleCards(newList);
         ArrayList<Chess> newList2 = new ArrayList<>();
         for (Chess c : cacheMap.get(rounds).getPlayerTwoData().getBattleCards()) {
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println(c);
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             newList2.add(new Chess(c));
         }
         playerTwo.setBattleCards(newList2);
