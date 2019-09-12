@@ -270,7 +270,7 @@ public class Game{
         playerOne.setBattleCards(newList);
         ArrayList<Chess> newList2 = new ArrayList<>();
         for (Chess c : cacheMap.get(rounds).getPlayerTwoData().getBattleCards()) {
-            newList.add(new Chess(c));
+            newList2.add(new Chess(c));
         }
         playerTwo.setBattleCards(newList2);
     }
@@ -366,7 +366,7 @@ public class Game{
                     } else {
                         int finder = simpleFindChess(chessOne);
                         if (finder != -1) {
-                            cardFight(chessOne.get(i), chessOne.get(finder));
+                            cardFight(chessTwo.get(i), chessOne.get(finder));
                         }
                     }
                 }
