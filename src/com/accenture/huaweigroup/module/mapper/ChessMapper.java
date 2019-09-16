@@ -14,4 +14,6 @@ public interface ChessMapper {
 
     void insert(Chess chess);
 
+    List<Chess> searchChess(String chess_name);
+
 }
